@@ -1,3 +1,9 @@
-export default function Dashboard() {
-  return <div className="text-center mt-20 text-2xl">Welcome to your Dashboard 🚀</div>;
+export default function DashboardPage() {
+  return (
+    <main style={{ padding: 40 }}>
+      <h1>Dashboard</h1>
+      <p>This is a dummy dashboard after login.</p>
+    </main>
+  );
 }
+git 
