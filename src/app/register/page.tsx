@@ -14,7 +14,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof registerSchema>) => {
     console.log("Register Data", data);
   };
 

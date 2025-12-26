@@ -14,7 +14,7 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
     console.log("Login Data", data);
   };
 

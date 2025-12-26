@@ -1,21 +1,25 @@
-import { InputHTMLAttributes } from "react";
-
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+type Props = {
   label: string;
+  type?: string;
   name: string;
   error?: string;
-}
+};
 
-export default function FormInput({ label, name, error, ...rest }: Props) {
+export default function FormInput({
+  label,
+  type = "text",
+  name,
+  error,
+}: Props) {
   return (
-    <div className="mb-4">
-      <label className="block mb-1 font-medium">{label}</label>
+    <div style={{ marginBottom: 16 }}>
+      <label>{label}</label>
       <input
+        type={type}
         name={name}
-        className="w-full border px-3 py-2 rounded"
-        {...rest}
+        style={{ width: "100%", padding: 8 }}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
