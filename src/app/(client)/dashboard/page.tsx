@@ -189,5 +189,4 @@ export default function ClientDashboardPage() {
   );
 }
 
-//eslint-disable-next-line react-hooks/rules-of-hooks
 // src/app/%28client%29/profile/edit/page.tsx
