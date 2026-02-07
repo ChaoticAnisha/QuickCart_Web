@@ -189,4 +189,3 @@ export default function ClientDashboardPage() {
   );
 }
 
-// src/app/%28client%29/profile/edit/page.tsx
