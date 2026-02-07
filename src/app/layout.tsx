@@ -1,24 +1,18 @@
-import type React from "react"
-import type { Metadata } from "next"
-import "./globals.css"
-import Navigation from "@/components/navigation"
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "QuickCart - Fresh Groceries Delivered Fast",
-  description: "Order fresh groceries online and get them delivered to your door. Premium quality, competitive prices.",
-}
+  title: 'QuickCart - Fast Delivery E-Commerce',
+  description: 'Get your groceries delivered in 16 minutes',
+};
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
-        <Navigation />
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
-  )
+  );
 }
