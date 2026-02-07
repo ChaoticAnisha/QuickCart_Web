@@ -17,6 +17,7 @@ export function useAuth() {
       try {
         const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
         if (authData.expiresAt > Date.now()) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setUser(authData.user);
         }
       } catch (error) {

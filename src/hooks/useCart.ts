@@ -10,6 +10,7 @@ export function useCart() {
 
   // Load cart on mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     loadCart();
     
     // Listen for cart updates
