@@ -189,4 +189,3 @@ export default function ClientDashboardPage() {
   );
 }
 //hittps://chat.openai.com/chat
-//https://chat.openai.com/chat
