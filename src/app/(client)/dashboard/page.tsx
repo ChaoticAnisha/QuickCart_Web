@@ -188,4 +188,6 @@ export default function ClientDashboardPage() {
     </div>
   );
 }
-// The above code is for the dashboard page, which includes a header with a search bar, a mega diwali sale section, featured products, and a grocery & kitchen section. Each section has its own styling and layout to create an engaging user experience.
+
+//eslint-disable-next-line react-hooks/rules-of-hooks
+// src/app/%28client%29/profile/edit/page.tsx
