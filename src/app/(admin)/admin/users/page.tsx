@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,7 +29,7 @@ export default function AdminUsersPage() {
 
   const loadUsers = async () => {
     setIsLoading(true);
-    
+
     // TODO: Replace with actual API call
     setTimeout(() => {
       setUsers([
@@ -36,7 +37,7 @@ export default function AdminUsersPage() {
           id: '1',
           name: 'Anisha Sah',
           email: 'anisha@example.com',
-          role: 'client',
+          role: 'USER',
           address: 'Kathmandu, Nepal',
           phone: '+977 9841234567',
           createdAt: new Date('2024-01-15'),
@@ -56,7 +57,7 @@ export default function AdminUsersPage() {
           id: '3',
           name: 'Rajesh Sharma',
           email: 'rajesh@example.com',
-          role: 'client',
+          role: 'USER',
           address: 'Lalitpur, Nepal',
           phone: '+977 9861234567',
           createdAt: new Date('2024-02-01'),
@@ -68,7 +69,7 @@ export default function AdminUsersPage() {
   };
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = !roleFilter || user.role === roleFilter;
@@ -77,17 +78,17 @@ export default function AdminUsersPage() {
 
   const paginatedUsers = filteredUsers.slice(
     pagination.startIndex,
-    pagination.endIndex
+    pagination.startIndex 
   );
 
   const columns = [
     {
       header: 'Name',
-      accessor: 'name' as keyof User,
+      accessor: (user: User) => user.name,
     },
     {
       header: 'Email',
-      accessor: 'email' as keyof User,
+      accessor: (user: User) => user.email,
     },
     {
       header: 'Phone',
@@ -165,14 +166,18 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table */}
-      <DataTable
-        data={paginatedUsers}
-        columns={columns}
-        onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
-      />
+      {filteredUsers.length === 0 ? (
+        <p className="text-gray-500">No users found.</p>
+      ) : (
+        <DataTable
+          data={paginatedUsers}
+          columns={columns}
+          onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
+        />
+      )}
 
       {/* Pagination */}
-      {filteredUsers.length > 10 && (
+      {filteredUsers.length  && (
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}

@@ -39,30 +39,31 @@ export default function LoginPage() {
     setServerError("");
 
     try {
+      console.log(formData);
       const result = await loginUser(formData);
       console.log(result);
       if (result.success) {
-         console.log("login is successful");
-        if (result.role === "admin") {
+         alert(`logged in as ${result.role}`);
+        if (result.role === "ADMIN") {
           router.push("/admin/dashboard");
         }else if(result.role=="USER"){
           alert("login successfull");
-          router.push("/client/dashboard")
+          router.push("/dashboard")
         }
          else {
           router.push("/dashboard");
         }
       } else {
-        setServerError(result.error || "Login failed. Please try again.");
+        setServerError("INVALID CREDENTIALS");
       }
     } catch (error) {
-      setServerError("An unexpected error occurred. Please try again.");
+      setServerError("INVALID CREDENTIALS");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fillDemoCredentials = (type: "admin" | "client") => {
+  const fillDemoCredentials = (type: "admin" | "USER") => {
     if (type === "admin") {
       setFormData({ email: "admin@quickcart.com", password: "admin123" });
     } else {
@@ -107,7 +108,7 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
-                onClick={() => fillDemoCredentials("client")}
+                onClick={() => fillDemoCredentials("USER")}
                 className="w-full text-left text-white text-sm bg-white/10 hover:bg-white/30 px-4 py-3 rounded-lg transition-colors font-medium"
               >
                 👤 <strong>Client:</strong> Create user account first
