@@ -1,129 +1,170 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Button from '@/components/common/Button';
-import { User as UserIcon, LogOut, MapPin, Phone, Mail, Edit, Camera } from 'lucide-react';
-import { User } from '@/types';
-import Image from 'next/image';
+import { User, Mail, Phone, MapPin, Edit, ShoppingCart, Package, ArrowLeft } from 'lucide-react';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    avatar: '',
+  });
 
   useEffect(() => {
-    const authCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('quickcart_auth='));
-
-    if (authCookie) {
-      try {
-        const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(authData.user);
-      } catch (error) {
-        console.error('Error parsing auth cookie:', error);
-      }
-    }
+    loadUserData();
   }, []);
 
-  const handleLogout = () => {
-    document.cookie = 'quickcart_auth=; path=/; max-age=0';
-    router.push('/');
+  const loadUserData = () => {
+    try {
+      const authCookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('quickcart_auth='));
+
+      if (authCookie) {
+        const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
+        if (authData.user) {
+          setUserData({
+            name: authData.user.name || '',
+            email: authData.user.email || '',
+            phone: authData.user.phone || '',
+            address: authData.user.address || '',
+            avatar: authData.user.avatar || '',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (!user) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <p className="text-gray-600">Loading...</p>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FFA500]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] p-6 text-center">
-        <div className="relative w-24 h-24 mx-auto mb-4">
-          {user.avatar ? (
-            <Image
-              src={user.avatar}
-              alt={user.name}
-              fill
-              className="rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
-              <UserIcon className="w-12 h-12 text-[#FFA500]" />
-            </div>
-          )}
-          <button
-            onClick={() => router.push('/profile/edit')}
-            className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <Camera className="w-4 h-4 text-[#FFA500]" />
-          </button>
+    <div className="min-h-screen bg-gradient-to-b from-[#FFD700] to-[#FFA500] p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => router.push('/dashboard')}
+          className="flex items-center gap-2 text-white hover:text-white/80 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="font-semibold">Back to Dashboard</span>
+        </button>
+
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">My Profile</h1>
+          <p className="text-white/90">Manage your account information</p>
         </div>
-        <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-        <p className="text-white/80">{user.email}</p>
-      </div>
 
-      <div className="max-w-2xl mx-auto p-6 space-y-4">
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Profile Information</h2>
-          
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-gray-400 mt-1" />
+        {/* Profile Card */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between mb-8 gap-6">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] flex items-center justify-center text-white text-5xl font-bold shadow-lg">
+                {userData.name ? userData.name.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <div className="text-center md:text-left">
+                <h2 className="text-3xl font-bold text-gray-800">{userData.name || 'User'}</h2>
+                <p className="text-gray-600 text-lg">{userData.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/profile/edit')}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-white rounded-xl font-bold hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Edit className="w-5 h-5" />
+              Edit Profile
+            </button>
+          </div>
+
+          {/* Profile Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
+              <div className="p-3 bg-blue-500 rounded-lg shadow-md">
+                <Mail className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-semibold text-gray-800">{user.email}</p>
+                <p className="text-sm text-gray-600 mb-1 font-semibold">Email Address</p>
+                <p className="text-gray-800 font-medium">{userData.email || 'Not provided'}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-gray-400 mt-1" />
+            <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+              <div className="p-3 bg-green-500 rounded-lg shadow-md">
+                <Phone className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Phone</p>
-                <p className="font-semibold text-gray-800">{user.phone || 'Not provided'}</p>
+                <p className="text-sm text-gray-600 mb-1 font-semibold">Phone Number</p>
+                <p className="text-gray-800 font-medium">{userData.phone || 'Not provided'}</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-gray-400 mt-1" />
+            <div className="flex items-start gap-4 md:col-span-2 p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl">
+              <div className="p-3 bg-orange-500 rounded-lg shadow-md">
+                <MapPin className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Address</p>
-                <p className="font-semibold text-gray-800">{user.address || 'Not provided'}</p>
+                <p className="text-sm text-gray-600 mb-1 font-semibold">Address</p>
+                <p className="text-gray-800 font-medium">{userData.address || 'Not provided'}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 space-y-3">
-          <Button
-            onClick={() => router.push('/profile/edit')}
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <Edit className="w-5 h-5" />
-            Edit Profile
-          </Button>
-
-          <Button
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <button
             onClick={() => router.push('/orders')}
-            variant="outline"
-            className="w-full"
+            className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all hover:scale-105"
           >
-            My Orders
-          </Button>
-          
-          <Button
-            onClick={handleLogout}
-            variant="danger"
-            className="w-full flex items-center justify-center gap-2"
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                <Package className="w-10 h-10 text-blue-600" />
+              </div>
+              <h3 className="font-bold text-gray-800 text-lg mb-2">My Orders</h3>
+              <p className="text-sm text-gray-600">View order history</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/cart')}
+            className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all hover:scale-105"
           >
-            <LogOut className="w-5 h-5" />
-            Logout
-          </Button>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                <ShoppingCart className="w-10 h-10 text-green-600" />
+              </div>
+              <h3 className="font-bold text-gray-800 text-lg mb-2">My Cart</h3>
+              <p className="text-sm text-gray-600">View shopping cart</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/profile/edit')}
+            className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                <Edit className="w-10 h-10 text-orange-600" />
+              </div>
+              <h3 className="font-bold text-gray-800 text-lg mb-2">Edit Profile</h3>
+              <p className="text-sm text-gray-600">Update your info</p>
+            </div>
+          </button>
         </div>
       </div>
     </div>

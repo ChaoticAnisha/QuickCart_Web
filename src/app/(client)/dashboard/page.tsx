@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
 import { Product } from '@/types';
@@ -19,13 +19,34 @@ import {
 
 export default function ClientDashboardPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { addToCart, isInCart, itemCount } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
   const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [activePath, setActivePath] = useState('/dashboard');
 
+  useEffect(() => {
+    const loadUserData = () => {
+      try {
+        const authCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('quickcart_auth='));
+
+        if (authCookie) {
+          const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
+          if (authData.user) {
+            setUserName(authData.user.name || authData.user.email.split('@')[0]);
+            setUserAvatar(authData.user.avatar || '');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   const categories = [
     { img: 'image 50.png', text: 'Lights, Diyas & Candles' },
@@ -107,7 +128,6 @@ export default function ClientDashboardPage() {
   };
 
   const handleNavigate = (path: string) => {
-    setActivePath(path);
     router.push(path);
   };
 
@@ -134,7 +154,7 @@ export default function ClientDashboardPage() {
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activePath === item.path;
+            const isActive = pathname === item.path;
 
             return (
               <button
@@ -160,7 +180,7 @@ export default function ClientDashboardPage() {
             className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
           >
             <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold">
-              N
+              {userName ? userName.charAt(0).toUpperCase() : 'N'}
             </div>
             <span className="font-medium">Logout</span>
           </button>
@@ -173,7 +193,7 @@ export default function ClientDashboardPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {userName}! Here's what's happening today.</p>
+            <p className="text-gray-600">Welcome back, {userName || 'Guest'}! Here's what's happening today.</p>
           </div>
 
           {/* Categories Section with Gold Background */}
@@ -183,7 +203,7 @@ export default function ClientDashboardPage() {
               {categories.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => router.push('/products')}
+                  onClick={() => router.push('/categories')}
                   className="bg-white rounded-xl p-4 flex flex-col items-center gap-3 hover:shadow-xl transition-all hover:scale-105"
                 >
                   <div className="relative w-24 h-24">
