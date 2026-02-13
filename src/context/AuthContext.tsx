@@ -3,15 +3,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 import { authAPI } from '@/lib/api';
-import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
-  isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => Promise<void>;
-  updateUser: (user: User) => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; role?: string }>;
+  register: (data: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    address?: string;
+  }) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,85 +25,147 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
+  // Load user from cookie on mount
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = () => {
-    const authCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('quickcart_auth='));
-
-    if (authCookie) {
+    const loadUser = () => {
       try {
-        const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
-        if (authData.expiresAt > Date.now()) {
-          setUser(authData.user);
+        const authCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('quickcart_auth='));
+
+        if (authCookie) {
+          const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
+          
+          if (authData.expiresAt > Date.now()) {
+            setUser(authData.user);
+          } else {
+            document.cookie = 'quickcart_auth=; path=/; max-age=0';
+          }
         }
       } catch (error) {
-        console.error('Error parsing auth cookie:', error);
+        console.error('Error loading user:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
 
-    setIsLoading(false);
-  };
+    loadUser();
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await authAPI.login(email, password);
+      console.log('🔐 Attempting login with:', email);
       
-      if (response.success && response.data) {
-        const { user, token } = response.data;
+      const result = await authAPI.login(email, password);
+      
+      console.log('📥 API Response:', result);
+      
+      if (result.success && result.data) {
+        const apiUser = result.data.user;
         
-        // Set cookie
+        const userData: User = {
+          id: apiUser.id,
+          name: apiUser.email.split('@')[0],
+          email: apiUser.email,
+          role: apiUser.role === 'admin' ? 'admin' : 'client',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        console.log('✅ User data created:', userData);
+
         const authData = {
-          user,
-          token,
+          user: userData,
+          token: result.data.token,
           expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
         };
+
+        document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
         
-        document.cookie = `quickcart_auth=${JSON.stringify(authData)}; path=/; max-age=${7 * 24 * 60 * 60}`;
+        setUser(userData);
         
-        setUser(user);
-        return { success: true };
+        console.log('🎉 Login successful! Role:', userData.role);
+        
+        return { success: true, role: userData.role };
       }
       
-      return { success: false, error: response.error || 'Login failed' };
+      console.error('❌ Login failed:', result.error);
+      return { success: false, error: result.error || 'Login failed' };
     } catch (error) {
-      return { success: false, error: 'An error occurred' };
+      console.error('💥 Login error:', error);
+      return { success: false, error: 'An error occurred during login' };
     }
   };
 
-  const logout = async () => {
-    try {
-      await authAPI.logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      document.cookie = 'quickcart_auth=; path=/; max-age=0';
-      setUser(null);
-      router.push('/login');
+const register = async (data: {
+  name: string;
+  email: string;
+  password: string; // ignored for now
+  phone?: string;
+  address?: string;
+}) => {
+  try {
+    console.log("📝 Attempting registration with:", data.email);
+
+    const result = await authAPI.register({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+    });
+
+    console.log("📥 Register API Response:", result);
+
+    if (result.success && result.data) {
+      const apiUser = result.data;
+
+      const userData: User = {
+        id: apiUser._id,
+        name: apiUser.name,
+        email: apiUser.email,
+        role: "client",
+        phone: apiUser.phone,
+        address: apiUser.address,
+        createdAt: new Date(apiUser.createdAt),
+        updatedAt: new Date(apiUser.updatedAt),
+      };
+
+      setUser(userData);
+      return { success: true };
     }
+
+    return { success: false, error: result.error };
+  } catch (error) {
+    return { success: false, error: "Registration failed" };
+  }
+};
+
+
+  const logout = () => {
+    console.log('👋 Logging out...');
+    document.cookie = 'quickcart_auth=; path=/; max-age=0';
+    setUser(null);
   };
 
-  const updateUser = (updatedUser: User) => {
+  const updateUser = (userData: Partial<User>) => {
+    if (!user) return;
+
+    const updatedUser = { ...user, ...userData };
     setUser(updatedUser);
-    
-    // Update cookie
-    const authCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('quickcart_auth='));
-    
-    if (authCookie) {
-      try {
+
+    try {
+      const authCookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('quickcart_auth='));
+
+      if (authCookie) {
         const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
         authData.user = updatedUser;
-        document.cookie = `quickcart_auth=${JSON.stringify(authData)}; path=/; max-age=${7 * 24 * 60 * 60}`;
-      } catch (error) {
-        console.error('Error updating auth cookie:', error);
+        document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
       }
+    } catch (error) {
+      console.error('Error updating user:', error);
     }
   };
 
@@ -105,9 +173,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isLoading,
         isAuthenticated: !!user,
+        isLoading,
         login,
+        register,
         logout,
         updateUser,
       }}
@@ -117,10 +186,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useAuthContext() {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }

@@ -26,34 +26,9 @@ export default function ClientDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePath, setActivePath] = useState('/dashboard');
 
-  useEffect(() => {
-    const authCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('quickcart_auth='));
     
-    if (!authCookie) {
-      router.push('/login');
-      return;
-    }
 
-    try {
-      const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
-      
-      if (authData.expiresAt < Date.now()) {
-        document.cookie = 'quickcart_auth=; path=/; max-age=0';
-        router.push('/login');
-        return;
-      }
-
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUserName(authData.user.name);
-      setUserAvatar(authData.user.avatar || '');
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error parsing auth:', error);
-      router.push('/login');
-    }
-  }, [router]);
+   
 
   const categories = [
     { img: 'image 50.png', text: 'Lights, Diyas & Candles' },
@@ -178,7 +153,7 @@ export default function ClientDashboardPage() {
                 <span className="font-medium flex-1 text-left">{item.label}</span>
               </button>
             );
-          })}
+          })}.
         </nav>
 
         {/* Logout - At the end */}

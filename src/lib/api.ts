@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './constants';
-import { User, Product, Order, Category, ApiResponse, DashboardStats, CartItem } from '@/types';
+import { User, Product, Order, Category, ApiResponse } from '@/types';
 
 // Helper function for API calls
 async function fetchAPI<T>(
@@ -26,8 +26,8 @@ async function fetchAPI<T>(
     }
 
     return {
-      success: true,
-      data: data.data || data,
+      success: data.success || true,
+      data: data.user || data.data || data,
       message: data.message,
     };
   } catch (error) {
@@ -47,18 +47,32 @@ export const authAPI = {
     });
   },
 
-  register: async (data: {
-    name: string;
-    email: string;
-    password: string;
-    phone?: string;
-    address?: string;
-  }) => {
-    return fetchAPI<{ user: User; token: string }>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  },
+ register: async (data: {
+  name: string;
+  email: string;
+  password: string;
+  role?: 'user' | 'admin';
+  phone?: string;
+  address?: string;
+  avatar?: File;
+}) => {
+  const formData = new FormData();
+
+  // REQUIRED fields
+  formData.append('name', data.name);
+  formData.append('email', data.email);
+  formData.append('password', data.password);
+
+  // OPTIONAL fields
+  if (data.role) formData.append('role', data.role);
+  if (data.phone) formData.append('phone', data.phone);
+  if (data.address) formData.append('address', data.address);
+
+  return fetchAPI<{ user: User; token: string }>('/auth/register', {
+    method: 'POST',
+    body: formData, // ⬅️ IMPORTANT: FormData (multer)
+  });
+},
 
   logout: async () => {
     return fetchAPI<void>('/auth/logout', {
@@ -67,16 +81,16 @@ export const authAPI = {
   },
 
   getCurrentUser: async () => {
-    return fetchAPI<User>('/auth/me');
+    return fetchAPI<User>('/auth/profile');
   },
 };
 
 // Products API
 export const productsAPI = {
-  getAll: async (params?: { 
-    page?: number; 
-    limit?: number; 
-    category?: string; 
+  getAll: async (params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
     search?: string;
   }) => {
     const queryParams = new URLSearchParams();
@@ -85,10 +99,10 @@ export const productsAPI = {
     if (params?.category) queryParams.append('category', params.category);
     if (params?.search) queryParams.append('search', params.search);
 
-    return fetchAPI<{ 
-      products: Product[]; 
-      total: number; 
-      page: number; 
+    return fetchAPI<{
+      products: Product[];
+      total: number;
+      page: number;
       totalPages: number;
     }>(`/products?${queryParams.toString()}`);
   },
@@ -120,9 +134,9 @@ export const productsAPI = {
 
 // Orders API
 export const ordersAPI = {
-  getAll: async (params?: { 
-    page?: number; 
-    limit?: number; 
+  getAll: async (params?: {
+    page?: number;
+    limit?: number;
     status?: string;
     userId?: string;
   }) => {
@@ -132,10 +146,10 @@ export const ordersAPI = {
     if (params?.status) queryParams.append('status', params.status);
     if (params?.userId) queryParams.append('userId', params.userId);
 
-    return fetchAPI<{ 
-      orders: Order[]; 
-      total: number; 
-      page: number; 
+    return fetchAPI<{
+      orders: Order[];
+      total: number;
+      page: number;
       totalPages: number;
     }>(`/orders?${queryParams.toString()}`);
   },
@@ -198,9 +212,9 @@ export const categoriesAPI = {
 
 // Users API (Admin only)
 export const usersAPI = {
-  getAll: async (params?: { 
-    page?: number; 
-    limit?: number; 
+  getAll: async (params?: {
+    page?: number;
+    limit?: number;
     role?: string;
   }) => {
     const queryParams = new URLSearchParams();
@@ -208,10 +222,10 @@ export const usersAPI = {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.role) queryParams.append('role', params.role);
 
-    return fetchAPI<{ 
-      users: User[]; 
-      total: number; 
-      page: number; 
+    return fetchAPI<{
+      users: User[];
+      total: number;
+      page: number;
       totalPages: number;
     }>(`/users?${queryParams.toString()}`);
   },
@@ -234,47 +248,40 @@ export const usersAPI = {
   },
 };
 
-// Dashboard API (Admin)
-export const dashboardAPI = {
-  getStats: async () => {
-    return fetchAPI<DashboardStats>('/admin/dashboard/stats');
-  },
-};
-
 // ============== CART API (LOCALSTORAGE) ==============
 export const cartAPI = {
-  get: (): CartItem[] => {
+  get: (): any[] => {
     if (typeof window === 'undefined') return [];
     const cart = localStorage.getItem('quickcart_cart');
     return cart ? JSON.parse(cart) : [];
   },
 
-  add: (item: { productId: string; product: Product; quantity: number }): CartItem[] => {
+  add: (item: { productId: string; product: Product; quantity: number }): any[] => {
     const cart = cartAPI.get();
-    const existingItem = cart.find((i: CartItem) => i.productId === item.productId);
+    const existingItem = cart.find((i: any) => i.productId === item.productId);
 
     if (existingItem) {
       existingItem.quantity += item.quantity;
     } else {
-      cart.push({ 
-        ...item, 
-        id: Date.now().toString(), 
-        price: item.product.price 
-      } as CartItem);
+      cart.push({
+        ...item,
+        id: Date.now().toString(),
+        price: item.product.price,
+      });
     }
 
     localStorage.setItem('quickcart_cart', JSON.stringify(cart));
-    
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cart-updated'));
     }
-    
+
     return cart;
   },
 
-  update: (itemId: string, quantity: number): CartItem[] => {
+  update: (itemId: string, quantity: number): any[] => {
     const cart = cartAPI.get();
-    const item = cart.find((i: CartItem) => i.id === itemId);
+    const item = cart.find((i: any) => i.id === itemId);
     if (item) {
       item.quantity = quantity;
       localStorage.setItem('quickcart_cart', JSON.stringify(cart));
@@ -285,9 +292,9 @@ export const cartAPI = {
     return cart;
   },
 
-  remove: (itemId: string): CartItem[] => {
+  remove: (itemId: string): any[] => {
     let cart = cartAPI.get();
-    cart = cart.filter((i: CartItem) => i.id !== itemId);
+    cart = cart.filter((i: any) => i.id !== itemId);
     localStorage.setItem('quickcart_cart', JSON.stringify(cart));
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cart-updated'));
@@ -295,7 +302,7 @@ export const cartAPI = {
     return cart;
   },
 
-  clear: (): CartItem[] => {
+  clear: (): any[] => {
     localStorage.removeItem('quickcart_cart');
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cart-updated'));
@@ -305,11 +312,11 @@ export const cartAPI = {
 
   getCount: (): number => {
     const cart = cartAPI.get();
-    return cart.reduce((total: number, item: CartItem) => total + item.quantity, 0);
+    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
   },
 
   getTotal: (): number => {
     const cart = cartAPI.get();
-    return cart.reduce((total: number, item: CartItem) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
   },
 };

@@ -4,7 +4,7 @@ export interface ValidationResult {
 }
 
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const phoneRegex = /^(\+977)?[9][6-9]\d{8}$/;
+export const phoneRegex = /^(\+977\s?)?[9][6-9]\d{8}$/; // ← Updated to allow space
 
 export function validateEmail(email: string): string {
   if (!email) return 'Email is required';
@@ -27,8 +27,14 @@ export function validateName(name: string): string {
 }
 
 export function validatePhone(phone: string): string {
-  if (!phone) return '';
-  if (!phoneRegex.test(phone)) return 'Please enter a valid Nepali phone number';
+  if (!phone) return ''; // Optional field
+  
+  // Remove spaces for validation
+  const cleanPhone = phone.replace(/\s/g, '');
+  
+  if (!phoneRegex.test(cleanPhone)) {
+    return 'Please enter a valid Nepali phone number';
+  }
   return '';
 }
 

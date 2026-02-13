@@ -1,30 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { validateRegisterForm, type RegisterFormData } from '@/lib/validation';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { validateRegisterForm, type RegisterFormData } from "@/lib/validation";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { registerUser } from "@/lib/register";
 
 export default function RegisterPage() {
   const router = useRouter();
+
   const [formData, setFormData] = useState<RegisterFormData>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    address: 'Kathmandu, Nepal',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    address: "Kathmandu, Nepal",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: '' }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setServerError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,29 +41,22 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true);
+    setServerError("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { confirmPassword, ...registerData } = formData;
+      const result = await registerUser(registerData);
 
-      const user = {
-        id: Date.now().toString(),
-        name: formData.name,
-        email: formData.email,
-        role: 'client',
-        address: formData.address,
-        phone: formData.phone,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      document.cookie = `quickcart_auth=${JSON.stringify({
-        user,
-        token: 'mock-token',
-        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
-      })}; path=/; max-age=${7 * 24 * 60 * 60}`;
-
-      router.push('/dashboard');
+      if (result.success) {
+        router.push("/dashboard");
+      } else {
+        setServerError(result.error || "Registration failed. Please try again.");
+      }
     } catch (error) {
+      setServerError(
+        error instanceof Error ? error.message : "An unexpected error occurred. Please try again."
+      );
+    } finally {
       setIsLoading(false);
     }
   };
@@ -68,17 +65,27 @@ export default function RegisterPage() {
     <div className="min-h-screen w-full bg-gradient-to-b from-[#FFD700] to-[#FFA500] flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="relative w-28 h-28">
               <Image src="/images/image 1 (1).png" alt="QuickCart Logo" fill className="object-contain" />
             </div>
           </div>
 
+          {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-white tracking-wide mb-2">Create Account</h1>
             <p className="text-white/70 text-base font-light">Sign up to start shopping</p>
           </div>
 
+          {/* Server Error */}
+          {serverError && (
+            <div className="bg-red-500 text-white px-4 py-3 rounded-xl text-center font-semibold">
+              {serverError}
+            </div>
+          )}
+
+          {/* Name Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -92,7 +99,7 @@ export default function RegisterPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter your name (e.g., Anisha Sah)"
+                  placeholder="Enter your name"
                   className="w-full h-14 pl-12 pr-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-[#FFA500]/50 text-gray-800"
                 />
               </div>
@@ -100,6 +107,7 @@ export default function RegisterPage() {
             {errors.name && <p className="text-red-200 text-sm mt-2 ml-2">{errors.name}</p>}
           </div>
 
+          {/* Email Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -121,6 +129,7 @@ export default function RegisterPage() {
             {errors.email && <p className="text-red-200 text-sm mt-2 ml-2">{errors.email}</p>}
           </div>
 
+          {/* Phone Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -134,7 +143,7 @@ export default function RegisterPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+977 9841234567"
+                  placeholder="+977 9841234567 (optional)"
                   className="w-full h-14 pl-12 pr-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-[#FFA500]/50 text-gray-800"
                 />
               </div>
@@ -142,6 +151,7 @@ export default function RegisterPage() {
             {errors.phone && <p className="text-red-200 text-sm mt-2 ml-2">{errors.phone}</p>}
           </div>
 
+          {/* Address Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -155,7 +165,7 @@ export default function RegisterPage() {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full h-14 pl-12 pr-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-[#FFA500]/50 text-gray-800"
+                  className="w-full h-14 pl-12 pr-4 rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-[#FFA500]/50 text-gray-800 bg-white"
                 >
                   <option value="Kathmandu, Nepal">Kathmandu, Nepal</option>
                   <option value="Pokhara, Nepal">Pokhara, Nepal</option>
@@ -167,6 +177,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* Password Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -176,7 +187,7 @@ export default function RegisterPage() {
                   </svg>
                 </span>
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -188,13 +199,14 @@ export default function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
             </div>
             {errors.password && <p className="text-red-200 text-sm mt-2 ml-2">{errors.password}</p>}
           </div>
 
+          {/* Confirm Password Field */}
           <div>
             <div className="bg-white rounded-xl shadow-lg">
               <div className="relative">
@@ -204,7 +216,7 @@ export default function RegisterPage() {
                   </svg>
                 </span>
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
@@ -216,13 +228,14 @@ export default function RegisterPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                  {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
             </div>
             {errors.confirmPassword && <p className="text-red-200 text-sm mt-2 ml-2">{errors.confirmPassword}</p>}
           </div>
 
+          {/* Submit Button */}
           <div className="pt-4">
             <button
               type="submit"
@@ -235,17 +248,18 @@ export default function RegisterPage() {
                   Creating Account...
                 </span>
               ) : (
-                'Sign Up'
+                "Sign Up"
               )}
             </button>
           </div>
 
+          {/* Login Link */}
           <div className="text-center pt-2">
             <p className="text-white text-base">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
                 type="button"
-                onClick={() => router.push('/login')}
+                onClick={() => router.push("/login")}
                 className="font-bold underline decoration-2 hover:text-white/90 transition-colors"
               >
                 Login

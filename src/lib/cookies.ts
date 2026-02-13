@@ -1,86 +1,23 @@
-'use server';
+// lib/cookies.ts (client-safe)
+import Cookies from "js-cookie";
 
-import { cookies } from 'next/headers';
-import { User, UserRole } from '@/types';
+const TOKEN_KEY = "auth_token";
+const ROLE_KEY = "auth_role";
 
-const AUTH_COOKIE_NAME = 'quickcart_auth';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
-
-interface AuthCookie {
-  user: User;
-  token: string;
-  expiresAt: number;
+export function setAuthToken(token: string, role?: string) {
+  Cookies.set(TOKEN_KEY, token, { expires: 7 });
+  if (role) Cookies.set(ROLE_KEY, role, { expires: 7 });
 }
 
-export async function setAuthCookie(user: User, token: string) {
-  const cookieStore = await cookies();
-  const authData: AuthCookie = {
-    user,
-    token,
-    expiresAt: Date.now() + COOKIE_MAX_AGE * 1000,
-  };
-
-  cookieStore.set(AUTH_COOKIE_NAME, JSON.stringify(authData), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: COOKIE_MAX_AGE,
-    path: '/',
-  });
+export function getAuthToken() {
+  return Cookies.get(TOKEN_KEY);
 }
 
-export async function getAuthCookie(): Promise<AuthCookie | null> {
-  const cookieStore = await cookies();
-  const authCookie = cookieStore.get(AUTH_COOKIE_NAME);
-
-  if (!authCookie) {
-    return null;
-  }
-
-  try {
-    const authData: AuthCookie = JSON.parse(authCookie.value);
-
-    if (authData.expiresAt < Date.now()) {
-      await clearAuthCookie();
-      return null;
-    }
-
-    return authData;
-  } catch (error) {
-    await clearAuthCookie();
-    return null;
-  }
+export function getAuthRole() {
+  return Cookies.get(ROLE_KEY);
 }
 
-export async function clearAuthCookie() {
-  const cookieStore = await cookies();
-  cookieStore.delete(AUTH_COOKIE_NAME);
-}
-
-export async function getCurrentUser(): Promise<User | null> {
-  const authData = await getAuthCookie();
-  return authData?.user || null;
-}
-
-export async function getAuthToken(): Promise<string | null> {
-  const authData = await getAuthCookie();
-  return authData?.token || null;
-}
-
-export async function isAuthenticated(): Promise<boolean> {
-  const authData = await getAuthCookie();
-  return authData !== null;
-}
-
-export async function hasRole(role: UserRole): Promise<boolean> {
-  const user = await getCurrentUser();
-  return user?.role === role;
-}
-
-export async function isAdmin(): Promise<boolean> {
-  return hasRole('admin');
-}
-
-export async function isClient(): Promise<boolean> {
-  return hasRole('client');
+export function clearAuth() {
+  Cookies.remove(TOKEN_KEY);
+  Cookies.remove(ROLE_KEY);
 }
