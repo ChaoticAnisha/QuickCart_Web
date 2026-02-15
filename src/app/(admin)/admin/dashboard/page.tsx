@@ -134,12 +134,10 @@ export default function AdminDashboardPage() {
         <p className="text-gray-600">Welcome back! Heren&apose;s whatn&apos;s happening today.</p>
       </div>
 
-      {/* Stats */}
       <DashboardStats stats={stats} />
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Chart Placeholder */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-800">Revenue Overview</h2>
