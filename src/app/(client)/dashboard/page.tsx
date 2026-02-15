@@ -192,7 +192,7 @@ export default function ClientDashboardPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {userName || 'Guest'}! Here's what's happening today.</p>
+            <p className="text-gray-600">Welcome back, {userName || 'Guest'}! Heren&apos;s whatn&apos;s happening today.</p>
           </div>
 
           {/* Categories Section with Gold Background */}
