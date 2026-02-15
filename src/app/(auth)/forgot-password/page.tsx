@@ -26,6 +26,7 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
+      // TODO: Replace with actual API call to send reset email
       await new Promise((resolve) => setTimeout(resolve, 2000));
       
       setSuccess(true);
