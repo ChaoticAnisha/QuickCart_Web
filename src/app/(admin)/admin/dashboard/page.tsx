@@ -7,7 +7,6 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import OrderStatusBadge from '@/components/admin/OrderStatusBadge';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
 import { Order, Product } from '@/types';
-import { TrendingUp } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,10 +18,6 @@ export default function AdminDashboardPage() {
   });
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [topProducts, setTopProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
@@ -80,6 +75,10 @@ export default function AdminDashboardPage() {
     }, 1000);
   };
 
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
   const orderColumns = [
     {
       header: 'Order ID',
@@ -128,38 +127,22 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Heren&apose;s whatn&apos;s happening today.</p>
+        <p className="text-gray-600">Welcome back! Here's what's happening today.</p>
       </div>
 
+      {/* Stats */}
       <DashboardStats stats={stats} />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Revenue Overview</h2>
-            <TrendingUp className="w-6 h-6 text-green-500" />
-          </div>
-          <div className="h-64 flex items-center justify-center text-gray-400">
-            Chart will be displayed here
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Orders Overview</h2>
-            <TrendingUp className="w-6 h-6 text-blue-500" />
-          </div>
-          <div className="h-64 flex items-center justify-center text-gray-400">
-            Chart will be displayed here
-          </div>
-        </div>
-      </div>
 
+      {/* Recent Orders */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Recent Orders</h2>
         <DataTable data={recentOrders} columns={orderColumns} />
       </div>
 
+      {/* Top Products */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Top Products</h2>
         <DataTable data={topProducts} columns={productColumns} />
@@ -167,4 +150,3 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
-

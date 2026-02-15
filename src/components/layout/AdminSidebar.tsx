@@ -6,7 +6,8 @@ import {
   Package, 
   ShoppingBag, 
   Users, 
-  Grid3x3, 
+  Grid3x3,
+  User, 
   LogOut,
   Menu,
   X
@@ -19,6 +20,7 @@ const menuItems = [
   { icon: ShoppingBag, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Users', path: '/admin/users' },
   { icon: Grid3x3, label: 'Categories', path: '/admin/categories' },
+  { icon: User, label: 'Profile', path: '/admin/profile' },
 ];
 
 export default function AdminSidebar() {
