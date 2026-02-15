@@ -144,7 +144,6 @@ export default function AdminDashboardPage() {
             Chart will be displayed here
           </div>
         </div>
-        {/* Orders Chart Placeholder */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-800">Orders Overview</h2>
@@ -168,3 +167,4 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+//huh
