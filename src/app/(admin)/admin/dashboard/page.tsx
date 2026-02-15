@@ -27,7 +27,6 @@ export default function AdminDashboardPage() {
   const loadDashboardData = async () => {
     setIsLoading(true);
     
-    // Simulating API call
     setTimeout(() => {
       setStats({
         totalOrders: 1234,
