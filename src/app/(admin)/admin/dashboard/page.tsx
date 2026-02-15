@@ -166,7 +166,6 @@ export default function AdminDashboardPage() {
         <DataTable data={recentOrders} columns={orderColumns} />
       </div>
 
-      {/* Top Products */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Top Products</h2>
         <DataTable data={topProducts} columns={productColumns} />
