@@ -146,7 +146,7 @@ export default function ClientDashboardPage() {
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
-            QuickCart Admin
+            QuickCart Users
           </h1>
         </div>
 
