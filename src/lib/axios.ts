@@ -8,7 +8,7 @@ const axiosInstance=axios.create(
     {
     baseURL:BASE_URL,
     headers:{
-        "Context-Type":"application/json" // working in json
+        "Context-Type":"application/json" 
     }
 }
 )
