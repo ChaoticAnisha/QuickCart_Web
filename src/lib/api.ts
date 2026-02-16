@@ -248,7 +248,6 @@ export const usersAPI = {
   },
 };
 
-// ============== CART API (LOCALSTORAGE) ==============
 export const cartAPI = {
   get: (): any[] => {
     if (typeof window === 'undefined') return [];
