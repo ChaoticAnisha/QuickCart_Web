@@ -13,7 +13,7 @@ export interface RegisterPayload {
 export interface RegisterResponse {
   success: boolean;
   error?: string;
-  user?: any;  // ✅ ADDED - to receive user data
+  user?: any;  
 }
 
 export async function registerUser(data: RegisterPayload): Promise<RegisterResponse> {
@@ -28,7 +28,7 @@ export async function registerUser(data: RegisterPayload): Promise<RegisterRespo
     console.log('Registration response:', response.data);
     
     if (response.data.success && response.data.user) {
-      // ✅ Store complete user data in cookie
+      // Store complete user data in cookie
       const authData = {
         user: {
           id: response.data.user.id,
