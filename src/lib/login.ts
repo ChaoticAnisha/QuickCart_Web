@@ -11,7 +11,7 @@ export interface LoginResponse {
   success: boolean;
   role?: string;
   error?: string;
-  user?: any;  // ✅ ADDED
+  user?: any;  
 }
 
 export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
