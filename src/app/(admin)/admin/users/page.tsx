@@ -124,7 +124,6 @@ export default function AdminUsersPage() {
           </button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
             <p className="text-sm text-gray-600 mb-1">Total Users</p>
