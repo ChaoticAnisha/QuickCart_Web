@@ -23,7 +23,7 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
     if (response.data.success && response.data.data) {
       const userData = response.data.data;
       
-      // ✅ Store complete user data in cookie
+      // Store complete user data in cookie
       const authData = {
         user: {
           id: userData.id,
@@ -34,7 +34,7 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
           role: userData.role === 'admin' ? 'admin' : 'client',
         },
         token: response.data.token || 'mock-token-' + Date.now(),
-        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, 
       };
 
       document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
