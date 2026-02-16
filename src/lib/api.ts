@@ -70,7 +70,7 @@ export const authAPI = {
 
   return fetchAPI<{ user: User; token: string }>('/auth/register', {
     method: 'POST',
-    body: formData, // ⬅️ IMPORTANT: FormData (multer)
+    body: formData, // IMPORTANT: FormData (multer)
   });
 },
 
