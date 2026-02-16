@@ -39,7 +39,7 @@ export async function registerUser(data: RegisterPayload): Promise<RegisterRespo
           role: response.data.user.role === 'admin' ? 'admin' : 'client',
         },
         token: 'mock-token-' + Date.now(),
-        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, 
       };
 
       document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
