@@ -3,17 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trash2, Eye, Search, UserPlus, Mail, Phone, MapPin, Calendar } from 'lucide-react';
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { getAllUsers, deleteUser, User } from '@/lib/users.api';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -21,79 +11,27 @@ export default function AdminUsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const usersPerPage = 10;
 
-  // Mock users data (replace with actual API call)
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [currentPage, searchQuery]);
 
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/users');
-      // const data = await response.json();
+      const response = await getAllUsers(currentPage, usersPerPage, searchQuery);
       
-      // Mock data for now
-      const mockUsers: User[] = [
-        {
-          _id: '1',
-          name: 'Anisha Shah',
-          email: 'anishashah0117@gmail.com',
-          phone: '+977 9841234567',
-          address: 'Kathmandu, Nepal',
-          role: 'user',
-          createdAt: '2024-02-10T10:30:00Z',
-          updatedAt: '2024-02-10T10:30:00Z',
-        },
-        {
-          _id: '2',
-          name: 'Admin User',
-          email: 'admin@quickcart.com',
-          phone: '+977 9812345678',
-          address: 'Pokhara, Nepal',
-          role: 'admin',
-          createdAt: '2024-01-15T08:20:00Z',
-          updatedAt: '2024-02-01T14:45:00Z',
-        },
-        {
-          _id: '3',
-          name: 'John Doe',
-          email: 'john@example.com',
-          phone: '+977 9823456789',
-          address: 'Lalitpur, Nepal',
-          role: 'user',
-          createdAt: '2024-02-08T12:15:00Z',
-          updatedAt: '2024-02-08T12:15:00Z',
-        },
-        {
-          _id: '4',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          phone: '+977 9834567890',
-          address: 'Bhaktapur, Nepal',
-          role: 'user',
-          createdAt: '2024-02-12T09:00:00Z',
-          updatedAt: '2024-02-12T09:00:00Z',
-        },
-        {
-          _id: '5',
-          name: 'Test User',
-          email: 'test@example.com',
-          phone: '+977 9845678901',
-          address: 'Biratnagar, Nepal',
-          role: 'user',
-          createdAt: '2024-02-13T11:30:00Z',
-          updatedAt: '2024-02-13T11:30:00Z',
-        },
-      ];
-      
-      setUsers(mockUsers);
+      setUsers(response.data);
+      setTotalUsers(response.pagination.total);
+      setTotalPages(response.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching users:', error);
+      alert('Failed to fetch users. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -108,13 +46,11 @@ export default function AdminUsersPage() {
     if (!userToDelete) return;
 
     try {
-      // TODO: Replace with actual API call
-      // await fetch(`http://localhost:5000/api/users/${userToDelete._id}`, {
-      //   method: 'DELETE',
-      // });
-
-      // Remove user from local state
-      setUsers(users.filter(u => u._id !== userToDelete._id));
+      await deleteUser(userToDelete._id || userToDelete.id);
+      
+      // Refresh the list
+      await fetchUsers();
+      
       setShowDeleteModal(false);
       setUserToDelete(null);
       
@@ -129,19 +65,10 @@ export default function AdminUsersPage() {
     router.push(`/admin/users/${userId}`);
   };
 
-  // Filter users based on search query
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.phone?.includes(searchQuery) ||
-    user.address?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Pagination logic
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset to first page on new search
+  };
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -182,10 +109,7 @@ export default function AdminUsersPage() {
               type="text"
               placeholder="Search by name, email, phone, or address..."
               value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFA500]/50"
             />
           </div>
@@ -204,10 +128,10 @@ export default function AdminUsersPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
             <p className="text-sm text-gray-600 mb-1">Total Users</p>
-            <p className="text-2xl font-bold text-gray-800">{users.length}</p>
+            <p className="text-2xl font-bold text-gray-800">{totalUsers}</p>
           </div>
           <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
-            <p className="text-sm text-gray-600 mb-1">Active Users</p>
+            <p className="text-sm text-gray-600 mb-1">Regular Users</p>
             <p className="text-2xl font-bold text-gray-800">{users.filter(u => u.role === 'user').length}</p>
           </div>
           <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4">
@@ -232,15 +156,15 @@ export default function AdminUsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {currentUsers.length === 0 ? (
+              {users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     No users found
                   </td>
                 </tr>
               ) : (
-                currentUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                users.map((user) => (
+                  <tr key={user._id || user.id} className="hover:bg-gray-50 transition-colors">
                     {/* User Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -304,7 +228,7 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <button
-                          onClick={() => handleViewUser(user._id)}
+                          onClick={() => handleViewUser(user._id || user.id)}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="View Details"
                         >
@@ -330,7 +254,7 @@ export default function AdminUsersPage() {
         {totalPages > 1 && (
           <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
             <div className="text-sm text-gray-600">
-              Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
+              Showing {((currentPage - 1) * usersPerPage) + 1} to {Math.min(currentPage * usersPerPage, totalUsers)} of {totalUsers} users
             </div>
             <div className="flex gap-2">
               <button
