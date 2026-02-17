@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ✅ Recent Products */}
+      {/* Recent Products */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">Recent Products</h2>
@@ -223,7 +223,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ✅ Recent Users */}
+      {/* Recent Users */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">Recent Users</h2>
