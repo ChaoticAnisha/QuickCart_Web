@@ -149,7 +149,7 @@ export async function updateProduct(id: string, data: UpdateProductPayload, imag
   }
 }
 
-// ✅ Delete product
+// Delete product
 export async function deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
   try {
     const response = await axiosInstance.delete(API.PRODUCTS.DELETE(id));
