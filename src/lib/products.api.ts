@@ -118,7 +118,7 @@ export async function createProduct(data: CreateProductPayload, imageFile?: File
   }
 }
 
-// ✅ Update product with image upload
+// Update product with image upload
 export async function updateProduct(id: string, data: UpdateProductPayload, imageFile?: File): Promise<GetProductResponse> {
   try {
     const formData = new FormData();
