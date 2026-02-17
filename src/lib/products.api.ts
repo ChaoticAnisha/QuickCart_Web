@@ -159,7 +159,7 @@ export async function deleteProduct(id: string): Promise<{ success: boolean; mes
   }
 }
 
-// ✅ Update stock
+// Update stock
 export async function updateProductStock(id: string, quantity: number): Promise<GetProductResponse> {
   try {
     const response = await axiosInstance.patch(API.PRODUCTS.UPDATE_STOCK(id), { quantity });
