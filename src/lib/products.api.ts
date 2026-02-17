@@ -54,7 +54,7 @@ export interface UpdateProductPayload {
   isActive?: boolean;
 }
 
-// ✅ Get all products
+// Get all products
 export async function getAllProducts(
   page: number = 1,
   limit: number = 10,
