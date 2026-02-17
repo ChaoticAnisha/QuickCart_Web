@@ -99,7 +99,7 @@ export async function createProduct(data: CreateProductPayload, imageFile?: File
     formData.append('isActive', String(data.isActive ?? true));
     
     if (imageFile) {
-      // ✅ Upload actual image file
+      // Upload actual image file
       formData.append('image', imageFile);
     } else if (data.image) {
       // ✅ Use image URL/path if provided
