@@ -85,7 +85,7 @@ export async function getProductById(id: string): Promise<GetProductResponse> {
   }
 }
 
-// ✅ Create product with image upload
+// Create product with image upload
 export async function createProduct(data: CreateProductPayload, imageFile?: File): Promise<GetProductResponse> {
   try {
     const formData = new FormData();
