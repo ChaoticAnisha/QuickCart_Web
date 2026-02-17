@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
         <p className="text-gray-600">Welcome back! Here's what's happening today.</p>
       </div>
 
-      {/* ✅ Real Stats Cards */}
+      {/* Real Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
           onClick={() => router.push('/admin/users')}
