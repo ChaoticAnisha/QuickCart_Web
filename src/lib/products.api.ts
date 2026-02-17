@@ -75,7 +75,7 @@ export async function getAllProducts(
   }
 }
 
-// ✅ Get single product
+// Get single product
 export async function getProductById(id: string): Promise<GetProductResponse> {
   try {
     const response = await axiosInstance.get(API.PRODUCTS.GET_BY_ID(id));
