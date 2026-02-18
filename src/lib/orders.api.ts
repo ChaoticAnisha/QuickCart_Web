@@ -86,7 +86,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   }
 }
 
-// ✅ Status badge styling
+// Status badge styling
 export function getStatusColor(status: string) {
   switch (status) {
     case "pending": return "bg-yellow-100 text-yellow-700";
