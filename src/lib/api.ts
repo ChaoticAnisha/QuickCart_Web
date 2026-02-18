@@ -248,7 +248,7 @@ export const usersAPI = {
   },
 };
 
-// ✅ FIXED Cart API - Uses productId consistently
+// FIXED Cart API - Uses productId consistently
 export const cartAPI = {
   get: (): any[] => {
     if (typeof window === 'undefined') return [];
