@@ -108,7 +108,7 @@ useEffect(() => {
     }
   };
 
-  // ✅ Order Success Screen
+  // Order Success Screen
   if (orderSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#FFD700] to-[#FFA500] flex items-center justify-center p-6">
