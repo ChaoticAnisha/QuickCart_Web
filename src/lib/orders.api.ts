@@ -41,7 +41,7 @@ export async function createOrder(data: CreateOrderPayload): Promise<{ success: 
   }
 }
 
-// ✅ Get all orders (admin)
+// Get all orders (admin)
 export async function getAllOrders(page = 1, limit = 10, status?: string) {
   try {
     const params = new URLSearchParams();
@@ -56,7 +56,7 @@ export async function getAllOrders(page = 1, limit = 10, status?: string) {
   }
 }
 
-// ✅ Get user orders (client)
+// Get user orders (client)
 export async function getUserOrders(userId: string, page = 1, limit = 10) {
   try {
     const response = await axiosInstance.get(`/api/orders/user/${userId}?page=${page}&limit=${limit}`);
