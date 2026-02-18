@@ -181,7 +181,7 @@ export default function ClientDashboardPage() {
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium flex-1 text-left">{item.label}</span>
-                {/* ✅ Show cart badge */}
+                {/* Show cart badge */}
                 {item.path === '/cart' && itemCount > 0 && (
                   <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {itemCount}
