@@ -102,7 +102,7 @@ export async function createProduct(data: CreateProductPayload, imageFile?: File
       // Upload actual image file
       formData.append('image', imageFile);
     } else if (data.image) {
-      // ✅ Use image URL/path if provided
+      // Use image URL/path if provided
       formData.append('image', data.image);
     }
 
