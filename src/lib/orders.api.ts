@@ -31,7 +31,7 @@ export interface CreateOrderPayload {
   note?: string;
 }
 
-// ✅ Create order
+// Create order
 export async function createOrder(data: CreateOrderPayload): Promise<{ success: boolean; order: Order; message: string }> {
   try {
     const response = await axiosInstance.post("/api/orders", data);
