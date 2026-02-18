@@ -47,32 +47,32 @@ export const authAPI = {
     });
   },
 
- register: async (data: {
-  name: string;
-  email: string;
-  password: string;
-  role?: 'user' | 'admin';
-  phone?: string;
-  address?: string;
-  avatar?: File;
-}) => {
-  const formData = new FormData();
+  register: async (data: {
+    name: string;
+    email: string;
+    password: string;
+    role?: 'user' | 'admin';
+    phone?: string;
+    address?: string;
+    avatar?: File;
+  }) => {
+    const formData = new FormData();
 
-  // REQUIRED fields
-  formData.append('name', data.name);
-  formData.append('email', data.email);
-  formData.append('password', data.password);
+    // REQUIRED fields
+    formData.append('name', data.name);
+    formData.append('email', data.email);
+    formData.append('password', data.password);
 
-  // OPTIONAL fields
-  if (data.role) formData.append('role', data.role);
-  if (data.phone) formData.append('phone', data.phone);
-  if (data.address) formData.append('address', data.address);
+    // OPTIONAL fields
+    if (data.role) formData.append('role', data.role);
+    if (data.phone) formData.append('phone', data.phone);
+    if (data.address) formData.append('address', data.address);
 
-  return fetchAPI<{ user: User; token: string }>('/auth/register', {
-    method: 'POST',
-    body: formData, // IMPORTANT: FormData (multer)
-  });
-},
+    return fetchAPI<{ user: User; token: string }>('/auth/register', {
+      method: 'POST',
+      body: formData,
+    });
+  },
 
   logout: async () => {
     return fetchAPI<void>('/auth/logout', {
@@ -248,6 +248,7 @@ export const usersAPI = {
   },
 };
 
+// ✅ FIXED Cart API - Uses productId consistently
 export const cartAPI = {
   get: (): any[] => {
     if (typeof window === 'undefined') return [];
@@ -263,9 +264,13 @@ export const cartAPI = {
       existingItem.quantity += item.quantity;
     } else {
       cart.push({
-        ...item,
-        id: Date.now().toString(),
+        productId: item.productId,
+        product: item.product,
+        quantity: item.quantity,
         price: item.product.price,
+        name: item.product.name,
+        image: item.product.image,
+        category: item.product.category,
       });
     }
 
@@ -278,9 +283,9 @@ export const cartAPI = {
     return cart;
   },
 
-  update: (itemId: string, quantity: number): any[] => {
+  update: (productId: string, quantity: number): any[] => {
     const cart = cartAPI.get();
-    const item = cart.find((i: any) => i.id === itemId);
+    const item = cart.find((i: any) => i.productId === productId);
     if (item) {
       item.quantity = quantity;
       localStorage.setItem('quickcart_cart', JSON.stringify(cart));
@@ -291,9 +296,9 @@ export const cartAPI = {
     return cart;
   },
 
-  remove: (itemId: string): any[] => {
+  remove: (productId: string): any[] => {
     let cart = cartAPI.get();
-    cart = cart.filter((i: any) => i.id !== itemId);
+    cart = cart.filter((i: any) => i.productId !== productId);
     localStorage.setItem('quickcart_cart', JSON.stringify(cart));
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cart-updated'));

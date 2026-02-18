@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
+import { getUserOrders } from '@/lib/orders.api';
+import Cookies from 'js-cookie';
 import { Product } from '@/types';
 import { 
   ShoppingCart, 
-  Bell, 
   User, 
-  Search,
   Home,
   Grid3x3,
   LogOut,
@@ -21,23 +21,27 @@ export default function ClientDashboardPage() {
   const router = useRouter();
   const pathname = usePathname();
   const { addToCart, isInCart, itemCount } = useCart();
-  const [searchQuery, setSearchQuery] = useState('');
   const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [totalOrders, setTotalOrders] = useState(0);
 
   useEffect(() => {
     const loadUserData = () => {
       try {
-        const authCookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('quickcart_auth='));
-
+        const authCookie = Cookies.get('quickcart_auth');
         if (authCookie) {
-          const authData = JSON.parse(decodeURIComponent(authCookie.split('=')[1]));
+          const authData = JSON.parse(authCookie);
           if (authData.user) {
             setUserName(authData.user.name || authData.user.email.split('@')[0]);
             setUserAvatar(authData.user.avatar || '');
+            setUserId(authData.user.id);
+            
+            // Load real orders count
+            if (authData.user.id) {
+              loadOrdersCount(authData.user.id);
+            }
           }
         }
       } catch (error) {
@@ -47,6 +51,15 @@ export default function ClientDashboardPage() {
 
     loadUserData();
   }, []);
+
+  const loadOrdersCount = async (uid: string) => {
+    try {
+      const response = await getUserOrders(uid, 1, 100);
+      setTotalOrders(response.pagination?.total || 0);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    }
+  };
 
   const categories = [
     { img: 'image 50.png', text: 'Lights, Diyas & Candles' },
@@ -117,13 +130,14 @@ export default function ClientDashboardPage() {
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: Package, label: 'Products', path: '/products' },
-    { icon: ShoppingCart, label: 'Orders', path: '/orders' },
+    { icon: ShoppingCart, label: 'Cart', path: '/cart' },  // ✅ Added Cart
+    { icon: Package, label: 'Orders', path: '/orders' },
     { icon: Grid3x3, label: 'Categories', path: '/categories' },
     { icon: User, label: 'Profile', path: '/profile' },
   ];
 
   const handleLogout = () => {
-    document.cookie = 'quickcart_auth=; path=/; max-age=0';
+    Cookies.remove('quickcart_auth');
     router.push('/');
   };
 
@@ -145,7 +159,7 @@ export default function ClientDashboardPage() {
       <aside className="flex flex-col w-64 bg-white border-r border-gray-200 h-screen sticky top-0">
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">
-            QuickCart Users
+            QuickCart
           </h1>
         </div>
 
@@ -167,19 +181,25 @@ export default function ClientDashboardPage() {
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium flex-1 text-left">{item.label}</span>
+                {/* ✅ Show cart badge */}
+                {item.path === '/cart' && itemCount > 0 && (
+                  <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
               </button>
             );
           })}
         </nav>
 
-        {/* Logout - At the end */}
+        {/* Logout */}
         <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold">
-              {userName ? userName.charAt(0).toUpperCase() : 'N'}
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] flex items-center justify-center text-white font-bold">
+              {userName ? userName.charAt(0).toUpperCase() : 'U'}
             </div>
             <span className="font-medium">Logout</span>
           </button>
@@ -192,7 +212,7 @@ export default function ClientDashboardPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {userName || 'Guest'}! Heren&apos;s whatn&apos;s happening today.</p>
+            <p className="text-gray-600">Welcome back, {userName || 'Guest'}! Here&apos;s what&apos;s happening today.</p>
           </div>
 
           {/* Categories Section with Gold Background */}
@@ -225,7 +245,10 @@ export default function ClientDashboardPage() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div 
+              onClick={() => router.push('/cart')}
+              className="bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all hover:scale-105"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium mb-1">Cart Items</p>
@@ -237,11 +260,14 @@ export default function ClientDashboardPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div 
+              onClick={() => router.push('/orders')}
+              className="bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all hover:scale-105"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-medium mb-1">Total Orders</p>
-                  <p className="text-3xl font-bold text-gray-800">12</p>
+                  <p className="text-3xl font-bold text-gray-800">{totalOrders}</p>
                 </div>
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-xl">
                   <Package className="w-8 h-8 text-white" />
@@ -305,7 +331,7 @@ export default function ClientDashboardPage() {
                             : 'bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-white hover:shadow-lg'
                         }`}
                       >
-                        {isInCart(product.id) ? 'Added' : 'Add to Cart'}
+                        {isInCart(product.id) ? 'Added ✓' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>

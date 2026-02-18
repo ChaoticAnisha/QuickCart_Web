@@ -10,14 +10,12 @@ export function useCart() {
 
   // Load cart on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
     loadCart();
     
     // Listen for cart updates
     const handleCartUpdate = () => {
       loadCart();
     };
-
     window.addEventListener('cart-updated', handleCartUpdate);
     
     return () => {
@@ -64,12 +62,20 @@ export function useCart() {
     return item?.quantity || 0;
   };
 
+  // ✅ Total item count
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
   
+  // ✅ Total price
   const totalAmount = cart.reduce(
     (total, item) => total + (item.price * item.quantity), 
     0
   );
+
+  // ✅ Add missing getCount function
+  const getCount = () => itemCount;
+
+  // ✅ Add missing getTotal function
+  const getTotal = () => totalAmount;
 
   return {
     cart,
@@ -82,5 +88,7 @@ export function useCart() {
     getItemQuantity,
     itemCount,
     totalAmount,
+    getCount,  // ✅ Added
+    getTotal,  // ✅ Added
   };
 }
