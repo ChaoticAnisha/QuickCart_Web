@@ -66,7 +66,7 @@ export async function getUserOrders(userId: string, page = 1, limit = 10) {
   }
 }
 
-// ✅ Get single order
+// Get single order
 export async function getOrderById(orderId: string) {
   try {
     const response = await axiosInstance.get(`/api/orders/${orderId}`);
@@ -76,7 +76,7 @@ export async function getOrderById(orderId: string) {
   }
 }
 
-// ✅ Update order status (admin)
+// Update order status (admin)
 export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const response = await axiosInstance.patch(`/api/orders/${orderId}/status`, { status });
