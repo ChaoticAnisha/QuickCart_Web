@@ -62,19 +62,19 @@ export function useCart() {
     return item?.quantity || 0;
   };
 
-  // ✅ Total item count
+  // Total item count
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
   
-  // ✅ Total price
+  // Total price
   const totalAmount = cart.reduce(
     (total, item) => total + (item.price * item.quantity), 
     0
   );
 
-  // ✅ Add missing getCount function
+  // Add missing getCount function
   const getCount = () => itemCount;
 
-  // ✅ Add missing getTotal function
+  // Add missing getTotal function
   const getTotal = () => totalAmount;
 
   return {
@@ -88,7 +88,7 @@ export function useCart() {
     getItemQuantity,
     itemCount,
     totalAmount,
-    getCount,  // ✅ Added
-    getTotal,  // ✅ Added
+    getCount,  
+    getTotal,  
   };
 }
