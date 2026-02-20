@@ -44,7 +44,6 @@ export default function LoginPage() {
       console.log('Login result:', result);
       
       if (result.success && result.user) {
-        // ✅ Fixed: Check role from user object (already lowercase from login.ts)
         if (result.user.role === "admin") {
           console.log('Redirecting to admin dashboard');
           router.push("/admin/dashboard");
@@ -67,12 +66,12 @@ export default function LoginPage() {
     if (type === "admin") {
       setFormData({ 
         email: "anishashah0117@gmail.com", 
-        password: "your-admin-password" // ✅ Update with real password
+        password: "your-admin-password" 
       });
     } else {
       setFormData({ 
         email: "client@gmail.com", 
-        password: "your-user-password" // ✅ Update with real password
+        password: "your-user-password" 
       });
     }
   };

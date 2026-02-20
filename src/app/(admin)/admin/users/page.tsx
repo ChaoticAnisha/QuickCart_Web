@@ -17,7 +17,6 @@ export default function AdminUsersPage() {
   const [total, setTotal] = useState(0);
 
   // Load users
-  
   const loadUsers = async () => {
     try {
       setLoading(true);
