@@ -31,12 +31,12 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
           email: userData.email,
           phone: userData.phone || '',
           address: userData.address || '',
-          role: userData.role === 'admin' ? 'admin' : 'client',
+          role: userData.role.toLowerCase(), // ✅ Fixed: Keep original role, convert to lowercase
         },
         token: response.data.token || 'mock-token-' + Date.now(),
         expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, 
       };
-
+      
       document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
       
       // If your API returns a token, store it

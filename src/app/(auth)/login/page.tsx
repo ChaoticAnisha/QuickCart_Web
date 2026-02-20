@@ -39,35 +39,41 @@ export default function LoginPage() {
     setServerError("");
 
     try {
-      console.log(formData);
+      console.log('Login attempt:', formData);
       const result = await loginUser(formData);
-      console.log(result);
-      if (result.success) {
-         alert(`logged in as ${result.role}`);
-        if (result.role === "ADMIN") {
+      console.log('Login result:', result);
+      
+      if (result.success && result.user) {
+        // ✅ Fixed: Check role from user object (already lowercase from login.ts)
+        if (result.user.role === "admin") {
+          console.log('Redirecting to admin dashboard');
           router.push("/admin/dashboard");
-        }else if(result.role=="USER"){
-          alert("login successfull");
-          router.push("/dashboard")
-        }
-         else {
+        } else {
+          console.log('Redirecting to user dashboard');
           router.push("/dashboard");
         }
       } else {
-        setServerError("INVALID CREDENTIALS");
+        setServerError(result.error || "Invalid credentials");
       }
     } catch (error) {
-      setServerError("INVALID CREDENTIALS");
+      console.error('Login error:', error);
+      setServerError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fillDemoCredentials = (type: "admin" | "USER") => {
+  const fillDemoCredentials = (type: "admin" | "user") => {
     if (type === "admin") {
-      setFormData({ email: "admin@quickcart.com", password: "admin123" });
+      setFormData({ 
+        email: "anishashah0117@gmail.com", 
+        password: "your-admin-password" // ✅ Update with real password
+      });
     } else {
-      setFormData({ email: "user@quickcart.com", password: "user123" });
+      setFormData({ 
+        email: "client@gmail.com", 
+        password: "your-user-password" // ✅ Update with real password
+      });
     }
   };
 
@@ -78,14 +84,23 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <div className="relative w-32 h-32">
-              <Image src="/images/image 1 (1).png" alt="QuickCart Logo" fill className="object-contain" />
+              <Image 
+                src="/images/image 1 (1).png" 
+                alt="QuickCart Logo" 
+                fill 
+                className="object-contain" 
+              />
             </div>
           </div>
 
           {/* Welcome Text */}
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-white tracking-wide mb-2">Welcome Back</h1>
-            <p className="text-white/70 text-base font-light">Sign in to continue shopping</p>
+            <h1 className="text-4xl font-bold text-white tracking-wide mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-white/70 text-base font-light">
+              Sign in to continue shopping
+            </p>
           </div>
 
           {/* Server Error */}
@@ -97,21 +112,23 @@ export default function LoginPage() {
 
           {/* Demo Credentials */}
           <div className="bg-white/20 rounded-xl p-4">
-            <p className="text-white text-sm font-semibold mb-3 text-center">📋 Demo Credentials - Click to Auto-fill:</p>
+            <p className="text-white text-sm font-semibold mb-3 text-center">
+              📋 Demo Credentials - Click to Auto-fill:
+            </p>
             <div className="space-y-2">
               <button
                 type="button"
                 onClick={() => fillDemoCredentials("admin")}
                 className="w-full text-left text-white text-sm bg-white/10 hover:bg-white/30 px-4 py-3 rounded-lg transition-colors font-medium"
               >
-                🔐 <strong>Admin:</strong> Create admin account first
+                🔐 <strong>Admin:</strong> anishashah0117@gmail.com
               </button>
               <button
                 type="button"
-                onClick={() => fillDemoCredentials("USER")}
+                onClick={() => fillDemoCredentials("user")}
                 className="w-full text-left text-white text-sm bg-white/10 hover:bg-white/30 px-4 py-3 rounded-lg transition-colors font-medium"
               >
-                👤 <strong>Client:</strong> Create user account first
+                👤 <strong>User:</strong> client@gmail.com
               </button>
             </div>
           </div>
@@ -131,7 +148,9 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            {errors.email && <p className="text-red-200 text-sm mt-2 ml-2">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-200 text-sm mt-2 ml-2">{errors.email}</p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -151,12 +170,15 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label="Toggle password visibility"
                 >
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
             </div>
-            {errors.password && <p className="text-red-200 text-sm mt-2 ml-2">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-200 text-sm mt-2 ml-2">{errors.password}</p>
+            )}
           </div>
 
           {/* Forgot Password Link */}
