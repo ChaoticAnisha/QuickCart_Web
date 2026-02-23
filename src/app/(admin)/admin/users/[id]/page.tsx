@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { getUserById } from '@/lib/admin.api';
-import { API_BASE_URL } from '@/lib/constants';
 import { ArrowLeft, Edit, Mail, Phone, MapPin, Calendar, Shield, User as UserIcon } from 'lucide-react';
-import Cookies from 'js-cookie';
 
 export default function UserDetailPage() {
   const router = useRouter();
@@ -53,11 +51,6 @@ export default function UserDetailPage() {
     });
   };
 
-  const getAvatarUrl = (avatar?: string) => {
-    if (!avatar) return 'https://placehold.co/200x200/FFD700/white?text=U';
-    return `${API_BASE_URL.replace('/api', '')}${avatar}`;
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-b from-[#FFD700] to-[#FFA500]">
@@ -85,7 +78,6 @@ export default function UserDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFD700] to-[#FFA500] p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.push('/admin/users')}
@@ -112,15 +104,22 @@ export default function UserDetailPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* User Profile Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <div className="text-center mb-6">
-                <img
-                  src={getAvatarUrl(user.avatar)}
-                  alt={user.name}
-                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover shadow-lg ring-4 ring-[#FFA500]/20"
-                />
+                {user.avatar ? (
+                  <img
+                    src={`http://localhost:5000${user.avatar}`}
+                    alt={user.name}
+                    className="w-32 h-32 rounded-full mx-auto mb-4 object-cover shadow-lg ring-4 ring-[#FFA500]/20"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center mx-auto mb-4 shadow-lg ring-4 ring-[#FFA500]/20">
+                    <span className="text-white font-bold text-4xl">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">{user.name}</h2>
                 <span className={`inline-block px-4 py-1 rounded-full text-sm font-bold ${
                   user.role === 'admin' 
@@ -153,13 +152,11 @@ export default function UserDetailPage() {
             </div>
           </div>
 
-          {/* User Details */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Personal Information</h3>
               
               <div className="space-y-6">
-                {/* Name */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Full Name
@@ -170,7 +167,6 @@ export default function UserDetailPage() {
                   </div>
                 </div>
 
-                {/* Email */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Email Address
@@ -181,7 +177,6 @@ export default function UserDetailPage() {
                   </div>
                 </div>
 
-                {/* Phone */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Phone Number
@@ -192,7 +187,6 @@ export default function UserDetailPage() {
                   </div>
                 </div>
 
-                {/* Address */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Address
@@ -203,7 +197,6 @@ export default function UserDetailPage() {
                   </div>
                 </div>
 
-                {/* Role */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     User Role
@@ -220,7 +213,6 @@ export default function UserDetailPage() {
                   </div>
                 </div>
 
-                {/* User ID */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     User ID
@@ -236,4 +228,4 @@ export default function UserDetailPage() {
       </div>
     </div>
   );
-}
+}y

@@ -4,7 +4,7 @@ export interface ValidationResult {
 }
 
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const phoneRegex = /^(\+977\s?)?[9][6-9]\d{8}$/; // ← Updated to allow space
+export const phoneRegex = /^(\+977\s?)?[9][6-9]\d{8}$/; 
 
 export function validateEmail(email: string): string {
   if (!email) return 'Email is required';

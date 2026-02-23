@@ -172,7 +172,7 @@ export async function updateProductStock(id: string, quantity: number): Promise<
 export function getProductImageUrl(image: string): string {
   if (!image) return 'https://placehold.co/400x400/FFD700/white?text=Product';
   if (image.startsWith('http')) return image;
-  if (image.startsWith('/uploads')) return image; // Proxied via next.config rewrite
+  if (image.startsWith('/uploads')) return image; 
   if (image.startsWith('/images')) return image;
   return `/images/${image}`;
 }

@@ -10,12 +10,14 @@ import {
   User, 
   LogOut,
   Menu,
-  X
+  X,
+  BarChart3
 } from 'lucide-react';
 import { useState } from 'react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
+  { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' }, // ✅ Add this line
   { icon: Package, label: 'Products', path: '/admin/products' },
   { icon: ShoppingBag, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Users', path: '/admin/users' },
@@ -45,7 +47,7 @@ export default function AdminSidebar() {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
-
+          
           return (
             <button
               key={item.path}

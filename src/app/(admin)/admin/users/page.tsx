@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAllUsers, deleteUser } from '@/lib/admin.api';
-import { API_BASE_URL } from '@/lib/constants';
 import { Plus, Edit, Trash2, Search, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
-import Cookies from 'js-cookie';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -16,7 +14,6 @@ export default function AdminUsersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
-  // Load users
   const loadUsers = async () => {
     try {
       setLoading(true);
@@ -39,7 +36,6 @@ export default function AdminUsersPage() {
     loadUsers();
   }, [page, search]);
 
-  // Delete user with confirmation
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) {
       return;
@@ -59,15 +55,9 @@ export default function AdminUsersPage() {
     }
   };
 
-  const getAvatarUrl = (avatar?: string) => {
-    if (!avatar) return 'https://placehold.co/100x100/FFD700/white?text=U';
-    return `${API_BASE_URL.replace('/api', '')}${avatar}`;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFD700] to-[#FFA500] p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white">User Management</h1>
@@ -82,7 +72,6 @@ export default function AdminUsersPage() {
           </button>
         </div>
 
-        {/* Search */}
         <div className="bg-white rounded-2xl shadow-xl p-4 mb-6">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -99,7 +88,6 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        {/* Users Table */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {loading ? (
             <div className="p-12 text-center">
@@ -127,11 +115,19 @@ export default function AdminUsersPage() {
                     <tr key={user._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={getAvatarUrl(user.avatar)}
-                            alt={user.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
+                          {user.avatar ? (
+                            <img
+                              src={`http://localhost:5000${user.avatar}`}
+                              alt={user.name}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                              <span className="text-white font-semibold text-sm">
+                                {user.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
                           <span className="font-semibold text-gray-800">{user.name}</span>
                         </div>
                       </td>
@@ -178,7 +174,6 @@ export default function AdminUsersPage() {
             </div>
           )}
 
-          {/* Pagination */}
           {!loading && users.length > 0 && (
             <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
               <p className="text-sm text-gray-600">

@@ -31,7 +31,7 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
           email: userData.email,
           phone: userData.phone || '',
           address: userData.address || '',
-          role: userData.role.toLowerCase(), // ✅ Fixed: Keep original role, convert to lowercase
+          role: userData.role.toLowerCase(), 
         },
         token: response.data.token || 'mock-token-' + Date.now(),
         expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, 
