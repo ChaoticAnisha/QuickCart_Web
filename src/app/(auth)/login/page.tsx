@@ -39,23 +39,18 @@ export default function LoginPage() {
     setServerError("");
 
     try {
-      console.log('Login attempt:', formData);
       const result = await loginUser(formData);
-      console.log('Login result:', result);
-      
+
       if (result.success && result.user) {
         if (result.user.role === "admin") {
-          console.log('Redirecting to admin dashboard');
           router.push("/admin/dashboard");
         } else {
-          console.log('Redirecting to user dashboard');
           router.push("/dashboard");
         }
       } else {
         setServerError(result.error || "Invalid credentials");
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch {
       setServerError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -112,7 +107,7 @@ export default function LoginPage() {
           {/* Demo Credentials */}
           <div className="bg-white/20 rounded-xl p-4">
             <p className="text-white text-sm font-semibold mb-3 text-center">
-              📋 Demo Credentials - Click to Auto-fill:
+              Demo Credentials - Click to Auto-fill:
             </p>
             <div className="space-y-2">
               <button
@@ -120,14 +115,14 @@ export default function LoginPage() {
                 onClick={() => fillDemoCredentials("admin")}
                 className="w-full text-left text-white text-sm bg-white/10 hover:bg-white/30 px-4 py-3 rounded-lg transition-colors font-medium"
               >
-                🔐 <strong>Admin:</strong> anishashah0117@gmail.com
+                <strong>Admin:</strong> anishashah0117@gmail.com
               </button>
               <button
                 type="button"
                 onClick={() => fillDemoCredentials("user")}
                 className="w-full text-left text-white text-sm bg-white/10 hover:bg-white/30 px-4 py-3 rounded-lg transition-colors font-medium"
               >
-                👤 <strong>User:</strong> client@gmail.com
+                <strong>User:</strong> client@gmail.com
               </button>
             </div>
           </div>
@@ -171,7 +166,7 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </div>

@@ -50,7 +50,6 @@ export interface DeleteUserResponse {
   message: string;
 }
 
-// Get all users with pagination and search
 export async function getAllUsers(
   page: number = 1,
   limit: number = 10,
@@ -70,7 +69,6 @@ export async function getAllUsers(
   }
 }
 
-// Get single user by ID
 export async function getUserById(id: string): Promise<GetUserResponse> {
   try {
     const response = await axiosInstance.get(API.USERS.GET_BY_ID(id));
@@ -81,7 +79,6 @@ export async function getUserById(id: string): Promise<GetUserResponse> {
   }
 }
 
-// Update user
 export async function updateUser(
   id: string,
   data: UpdateUserPayload
@@ -95,7 +92,6 @@ export async function updateUser(
   }
 }
 
-// Delete user
 export async function deleteUser(id: string): Promise<DeleteUserResponse> {
   try {
     const response = await axiosInstance.delete(API.USERS.DELETE(id));

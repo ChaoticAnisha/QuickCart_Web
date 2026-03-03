@@ -18,12 +18,9 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
   try {
     const response = await axiosInstance.post(API.AUTH.LOGIN, data);
     
-    console.log('Login response:', response.data);
-    
     if (response.data.success && response.data.data) {
       const userData = response.data.data;
-      
-      // Store complete user data in cookie
+
       const authData = {
         user: {
           id: userData.id,
@@ -39,7 +36,6 @@ export async function loginUser(data: LoginPayload): Promise<LoginResponse> {
       
       document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
       
-      // If your API returns a token, store it
       if (response.data.token) {
         setAuthToken(response.data.token);
       }

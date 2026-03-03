@@ -131,7 +131,10 @@ export default function AnalyticsPage() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={(entry) => `${entry._id}: ${entry.count}`}
+                label={(entry) => {
+                  const e = entry as unknown as { _id: string; count: number };
+                  return `${e._id}: ${e.count}`;
+                }}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="count"

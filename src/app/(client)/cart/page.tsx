@@ -52,8 +52,8 @@ export default function CartPage() {
                 {/* Image */}
                 <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
                   <img
-                    src={getProductImageUrl(item.product?.image || item.image || '')}
-                    alt={item.product?.name || item.name || 'Product'}
+                    src={getProductImageUrl(item.product?.image || '')}
+                    alt={item.product?.name || 'Product'}
                     className="w-full h-full object-contain p-2"
                     onError={(e) => {
                       const t = e.target as HTMLImageElement;
@@ -65,10 +65,10 @@ export default function CartPage() {
                 {/* Details */}
                 <div className="flex-1">
                   <h3 className="font-bold text-gray-800 mb-1 line-clamp-2">
-                    {item.product?.name || item.name || 'Product'}
+                    {item.product?.name || 'Product'}
                   </h3>
                   <p className="text-sm text-gray-500 mb-2">
-                    {item.product?.category || item.category || ''}
+                    {item.product?.category || ''}
                   </p>
                   <p className="text-[#FFA500] font-bold text-lg">
                     ₹{item.product?.price || item.price || 0}
@@ -120,7 +120,7 @@ export default function CartPage() {
               <div className="space-y-3 mb-6">
                 {cart.map((item) => {
                   const itemPrice = item.product?.price || item.price || 0;
-                  const itemName = item.product?.name || item.name || 'Product';
+                  const itemName = item.product?.name || 'Product';
                   
                   return (
                     <div key={item.productId} className="flex justify-between text-sm">

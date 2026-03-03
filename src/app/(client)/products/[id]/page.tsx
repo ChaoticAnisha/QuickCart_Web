@@ -29,7 +29,6 @@ export default function ProductDetailsPage() {
   const loadProduct = () => {
     setIsLoading(true);
     
-    // TODO: Replace with actual API call
     setTimeout(() => {
       setProduct({
         id: productId,

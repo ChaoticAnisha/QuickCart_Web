@@ -1,10 +1,10 @@
 import { API_BASE_URL } from './constants';
 import Cookies from 'js-cookie';
 
-const getAuthHeaders = () => {
+const getAuthHeaders = (): Record<string, string> => {
   const authCookie = Cookies.get('quickcart_auth');
   if (!authCookie) return {};
-  
+
   try {
     const { user } = JSON.parse(authCookie);
     return {

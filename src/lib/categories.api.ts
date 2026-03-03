@@ -34,7 +34,6 @@ export interface UpdateCategoryPayload {
   description?: string;
 }
 
-// Get all categories
 export async function getAllCategories(): Promise<GetCategoriesResponse> {
   try {
     const response = await axiosInstance.get(API.CATEGORIES.GET_ALL);
@@ -45,7 +44,6 @@ export async function getAllCategories(): Promise<GetCategoriesResponse> {
   }
 }
 
-// Get single category
 export async function getCategoryById(id: string): Promise<GetCategoryResponse> {
   try {
     const response = await axiosInstance.get(API.CATEGORIES.GET_BY_ID(id));
@@ -56,7 +54,6 @@ export async function getCategoryById(id: string): Promise<GetCategoryResponse> 
   }
 }
 
-// Create category
 export async function createCategory(data: CreateCategoryPayload): Promise<GetCategoryResponse> {
   try {
     const response = await axiosInstance.post(API.CATEGORIES.CREATE, data);
@@ -67,7 +64,6 @@ export async function createCategory(data: CreateCategoryPayload): Promise<GetCa
   }
 }
 
-// Update category
 export async function updateCategory(id: string, data: UpdateCategoryPayload): Promise<GetCategoryResponse> {
   try {
     const response = await axiosInstance.put(API.CATEGORIES.UPDATE(id), data);
@@ -78,7 +74,6 @@ export async function updateCategory(id: string, data: UpdateCategoryPayload): P
   }
 }
 
-// Delete category
 export async function deleteCategory(id: string): Promise<{ success: boolean; message: string }> {
   try {
     const response = await axiosInstance.delete(API.CATEGORIES.DELETE(id));

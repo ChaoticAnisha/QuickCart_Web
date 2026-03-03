@@ -84,7 +84,7 @@ export default function KhaltiPayment({
     <div className="space-y-4">
       {/* Test Credentials Info */}
       <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
-        <h4 className="font-bold text-purple-800 mb-2">🧪 Test Payment Credentials:</h4>
+        <h4 className="font-bold text-purple-800 mb-2">Test Payment Credentials:</h4>
         <div className="text-sm text-purple-700 space-y-1">
           <p><strong>Mobile:</strong> 9800000001 (or 9800000002, 9800000003... up to 9800000010)</p>
           <p><strong>MPIN:</strong> 1111</p>

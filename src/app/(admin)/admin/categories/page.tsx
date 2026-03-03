@@ -108,7 +108,6 @@ export default function AdminCategoriesPage() {
     try {
       setIsSaving(true);
 
-      // Handle image
       let imagePath = formData.image;
       if (imageFile) {
         // For now store filename - in production upload to server

@@ -24,7 +24,6 @@ export default function AdminOrderDetailsPage() {
   }, [orderId]);
 
   const loadOrder = async () => {
-    // TODO: Replace with actual API call
     setTimeout(() => {
       setOrder({
         id: orderId,
@@ -33,7 +32,7 @@ export default function AdminOrderDetailsPage() {
           id: '1',
           name: 'Anisha Sah',
           email: 'anisha@example.com',
-          role: 'client',
+          role: 'user',
           address: 'Kathmandu, Nepal',
           phone: '+977 9841234567',
           createdAt: new Date(),
@@ -95,7 +94,6 @@ export default function AdminOrderDetailsPage() {
   const handleStatusUpdate = async (newStatus: OrderStatus) => {
     setIsUpdating(true);
     
-    // TODO: Replace with actual API call
     setTimeout(() => {
       if (order) {
         setOrder({ ...order, status: newStatus });

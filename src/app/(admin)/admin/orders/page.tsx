@@ -217,18 +217,18 @@ export default function AdminOrdersPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                       <div className="bg-gray-50 rounded-xl p-4">
                         <p className="text-xs font-bold text-gray-500 uppercase mb-1">Delivery Address</p>
-                        <p className="text-gray-800">📍 {order.deliveryAddress}</p>
+                        <p className="text-gray-800">{order.deliveryAddress}</p>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-4">
                         <p className="text-xs font-bold text-gray-500 uppercase mb-1">Order Info</p>
-                        <p className="text-gray-800">💳 {order.paymentMethod}</p>
+                        <p className="text-gray-800">{order.paymentMethod}</p>
                         <p className="text-gray-500 text-sm mt-1">
                           {new Date(order.createdAt).toLocaleDateString('en-US', {
                             year: 'numeric', month: 'long', day: 'numeric',
                             hour: '2-digit', minute: '2-digit'
                           })}
                         </p>
-                        {order.note && <p className="text-gray-600 text-sm mt-1">📝 {order.note}</p>}
+                        {order.note && <p className="text-gray-600 text-sm mt-1">{order.note}</p>}
                       </div>
                     </div>
 

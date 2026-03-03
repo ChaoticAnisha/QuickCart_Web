@@ -1,7 +1,6 @@
 import { API_BASE_URL } from './constants';
 import { User, Product, Order, Category, ApiResponse } from '@/types';
 
-// Helper function for API calls
 async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit

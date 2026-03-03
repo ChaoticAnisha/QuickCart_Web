@@ -26,7 +26,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from cookie on mount
   useEffect(() => {
     const loadUser = () => {
       try {
@@ -55,25 +54,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('🔐 Attempting login with:', email);
-      
       const result = await authAPI.login(email, password);
-      
-      console.log('📥 API Response:', result);
-      
+
       if (result.success && result.data) {
         const apiUser = result.data.user;
-        
+
         const userData: User = {
           id: apiUser.id,
           name: apiUser.email.split('@')[0],
           email: apiUser.email,
-          role: apiUser.role === 'admin' ? 'admin' : 'client',
+          role: apiUser.role === 'admin' ? 'admin' : 'user',
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-
-        console.log('✅ User data created:', userData);
 
         const authData = {
           user: userData,
@@ -84,16 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         document.cookie = `quickcart_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}`;
         
         setUser(userData);
-        
-        console.log('🎉 Login successful! Role:', userData.role);
-        
+
         return { success: true, role: userData.role };
       }
-      
-      console.error('❌ Login failed:', result.error);
+
       return { success: false, error: result.error || 'Login failed' };
     } catch (error) {
-      console.error('💥 Login error:', error);
+      console.error('Login error:', error);
       return { success: false, error: 'An error occurred during login' };
     }
   };
@@ -101,30 +91,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 const register = async (data: {
   name: string;
   email: string;
-  password: string; // ignored for now
+  password: string;
   phone?: string;
   address?: string;
 }) => {
   try {
-    console.log("📝 Attempting registration with:", data.email);
-
     const result = await authAPI.register({
       name: data.name,
       email: data.email,
+      password: data.password,
       phone: data.phone,
       address: data.address,
     });
 
-    console.log("📥 Register API Response:", result);
-
     if (result.success && result.data) {
-      const apiUser = result.data;
+      const apiUser = result.data as unknown as {
+        _id?: string;
+        id?: string;
+        name: string;
+        email: string;
+        phone?: string;
+        address?: string;
+        createdAt: string;
+        updatedAt: string;
+      };
 
       const userData: User = {
-        id: apiUser._id,
+        id: (apiUser._id || apiUser.id) ?? '',
         name: apiUser.name,
         email: apiUser.email,
-        role: "client",
+        role: "user",
         phone: apiUser.phone,
         address: apiUser.address,
         createdAt: new Date(apiUser.createdAt),
@@ -143,7 +139,6 @@ const register = async (data: {
 
 
   const logout = () => {
-    console.log('👋 Logging out...');
     document.cookie = 'quickcart_auth=; path=/; max-age=0';
     setUser(null);
   };

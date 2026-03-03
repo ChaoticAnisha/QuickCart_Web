@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 import { Clock, Search, Filter, ArrowLeft, ShoppingCart } from 'lucide-react';
-import { getAllProducts, getAllCategories, getProductImageUrl } from '@/lib/products.api';
+import { getAllProducts, getProductImageUrl } from '@/lib/products.api';
 import { getAllCategories as fetchCategories } from '@/lib/categories.api';
 
 interface Product {

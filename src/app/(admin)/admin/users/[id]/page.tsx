@@ -126,7 +126,7 @@ export default function UserDetailPage() {
                     ? 'bg-red-100 text-red-600' 
                     : 'bg-green-100 text-green-600'
                 }`}>
-                  {user.role === 'admin' ? '👑 ADMIN' : '👤 USER'}
+                  {user.role === 'admin' ? 'ADMIN' : 'USER'}
                 </span>
               </div>
 
@@ -228,4 +228,4 @@ export default function UserDetailPage() {
       </div>
     </div>
   );
-}y
+}

@@ -17,7 +17,7 @@ import { useState } from 'react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
-  { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' }, // ✅ Add this line
+  { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
   { icon: Package, label: 'Products', path: '/admin/products' },
   { icon: ShoppingBag, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Users', path: '/admin/users' },

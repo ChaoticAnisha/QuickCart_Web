@@ -31,7 +31,6 @@ export interface CreateOrderPayload {
   note?: string;
 }
 
-// Create order
 export async function createOrder(data: CreateOrderPayload): Promise<{ success: boolean; order: Order; message: string }> {
   try {
     const response = await axiosInstance.post("/api/orders", data);
@@ -41,7 +40,6 @@ export async function createOrder(data: CreateOrderPayload): Promise<{ success: 
   }
 }
 
-// Get all orders (admin)
 export async function getAllOrders(page = 1, limit = 10, status?: string) {
   try {
     const params = new URLSearchParams();
@@ -56,7 +54,6 @@ export async function getAllOrders(page = 1, limit = 10, status?: string) {
   }
 }
 
-// Get user orders (client)
 export async function getUserOrders(userId: string, page = 1, limit = 10) {
   try {
     const response = await axiosInstance.get(`/api/orders/user/${userId}?page=${page}&limit=${limit}`);
@@ -66,7 +63,6 @@ export async function getUserOrders(userId: string, page = 1, limit = 10) {
   }
 }
 
-// Get single order
 export async function getOrderById(orderId: string) {
   try {
     const response = await axiosInstance.get(`/api/orders/${orderId}`);
@@ -76,7 +72,6 @@ export async function getOrderById(orderId: string) {
   }
 }
 
-// Update order status (admin)
 export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const response = await axiosInstance.patch(`/api/orders/${orderId}/status`, { status });
@@ -86,7 +81,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
   }
 }
 
-// Status badge styling
 export function getStatusColor(status: string) {
   switch (status) {
     case "pending": return "bg-yellow-100 text-yellow-700";
@@ -101,12 +95,12 @@ export function getStatusColor(status: string) {
 
 export function getStatusLabel(status: string) {
   switch (status) {
-    case "pending": return "⏳ Pending";
-    case "confirmed": return "✅ Confirmed";
-    case "processing": return "🔄 Processing";
-    case "out_for_delivery": return "🚚 Out for Delivery";
-    case "delivered": return "📦 Delivered";
-    case "cancelled": return "❌ Cancelled";
+    case "pending": return "Pending";
+    case "confirmed": return "Confirmed";
+    case "processing": return "Processing";
+    case "out_for_delivery": return "Out for Delivery";
+    case "delivered": return "Delivered";
+    case "cancelled": return "Cancelled";
     default: return status;
   }
 }

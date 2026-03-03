@@ -72,7 +72,6 @@ export default function EditProfilePage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // Update cookie with new data
       const authCookie = document.cookie
         .split('; ')
         .find(row => row.startsWith('quickcart_auth='));

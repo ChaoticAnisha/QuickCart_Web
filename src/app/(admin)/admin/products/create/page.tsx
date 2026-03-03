@@ -52,7 +52,6 @@ export default function CreateProductPage() {
     setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
-  // ✅ Handle image file selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -126,7 +125,6 @@ export default function CreateProductPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* ✅ Image Upload Section */}
             <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Product Image *
@@ -261,7 +259,7 @@ export default function CreateProductPage() {
               {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
               {categories.length === 0 && (
                 <p className="text-orange-500 text-sm mt-1">
-                  ⚠️ No categories found. 
+                  No categories found.
                   <button 
                     type="button"
                     onClick={() => router.push('/admin/categories')}

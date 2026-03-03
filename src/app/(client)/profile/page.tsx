@@ -55,7 +55,6 @@ export default function ProfilePage() {
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
-      // Update cookie with new avatar
       const cookieData = Cookies.get('quickcart_auth');
       if (cookieData) {
         const parsed = JSON.parse(cookieData);
@@ -109,7 +108,6 @@ export default function ProfilePage() {
 
       const response = await axiosInstance.put(`/api/users/${userData.id}`, editData);
 
-      // Update cookie with new data
       const cookieData = Cookies.get('quickcart_auth');
       if (cookieData) {
         const parsed = JSON.parse(cookieData);

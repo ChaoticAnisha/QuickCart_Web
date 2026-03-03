@@ -130,7 +130,7 @@ export default function ClientDashboardPage() {
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: Package, label: 'Products', path: '/products' },
-    { icon: ShoppingCart, label: 'Cart', path: '/cart' },  // ✅ Added Cart
+    { icon: ShoppingCart, label: 'Cart', path: '/cart' },
     { icon: Package, label: 'Orders', path: '/orders' },
     { icon: Grid3x3, label: 'Categories', path: '/categories' },
     { icon: User, label: 'Profile', path: '/profile' },

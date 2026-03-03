@@ -84,8 +84,8 @@ export default function CheckoutPage() {
         userId: userData.id,
         items: cart.map(item => ({
           productId: item.productId,
-          name: item.product?.name || item.name || '',
-          image: item.product?.image || item.image || '',
+          name: item.product?.name || '',
+          image: item.product?.image || '',
           price: item.product?.price || item.price || 0,
           quantity: item.quantity,
         })),
@@ -122,8 +122,8 @@ export default function CheckoutPage() {
         userId: userData.id,
         items: cart.map(item => ({
           productId: item.productId,
-          name: item.product?.name || item.name || '',
-          image: item.product?.image || item.image || '',
+          name: item.product?.name || '',
+          image: item.product?.image || '',
           price: item.product?.price || item.price || 0,
           quantity: item.quantity,
         })),
@@ -165,7 +165,7 @@ export default function CheckoutPage() {
             <CheckCircle className="w-14 h-14 text-green-500" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-3">
-            Order Placed! 🎉
+            Order Placed!
           </h2>
           <p className="text-sm text-gray-400 mb-8">
             Order ID: #{orderId.slice(-8).toUpperCase()}

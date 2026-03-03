@@ -65,7 +65,7 @@ export default function ClientOrdersPage() {
           <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
             <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-800 mb-2">No Orders Yet</h3>
-            <p className="text-gray-500 mb-6">You haven't placed any orders yet.</p>
+            <p className="text-gray-500 mb-6">You have not placed any orders yet.</p>
             <button
               onClick={() => router.push('/products')}
               className="px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-white rounded-xl font-bold hover:shadow-lg"
@@ -128,7 +128,7 @@ export default function ClientOrdersPage() {
                 </div>
 
                 <div className="mt-3 text-sm text-gray-500">
-                  📍 {order.deliveryAddress} | 💳 {order.paymentMethod}
+                  {order.deliveryAddress} | {order.paymentMethod}
                 </div>
               </div>
             ))}

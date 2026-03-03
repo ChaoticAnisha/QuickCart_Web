@@ -8,7 +8,6 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get user from cookie
     const authCookie = document.cookie
       .split('; ')
       .find(row => row.startsWith('quickcart_auth='));
@@ -30,7 +29,7 @@ export function useAuth() {
 
   const isAuthenticated = !!user;
   const isAdmin = user?.role === 'admin';
-  const isClient = user?.role === 'client';
+  const isClient = user?.role === 'user';
 
   return {
     user,

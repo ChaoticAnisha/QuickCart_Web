@@ -82,7 +82,7 @@ export default function AdminProfilePage() {
                 <h2 className="text-3xl font-bold text-gray-800">{userData.name || 'Administrator'}</h2>
                 <p className="text-gray-600 text-lg">{userData.email}</p>
                 <span className="inline-block mt-2 px-4 py-1 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 rounded-full text-sm font-bold">
-                  👑 ADMIN
+                  ADMIN
                 </span>
               </div>
             </div>

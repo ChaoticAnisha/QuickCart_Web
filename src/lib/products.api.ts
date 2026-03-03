@@ -54,7 +54,6 @@ export interface UpdateProductPayload {
   isActive?: boolean;
 }
 
-// Get all products
 export async function getAllProducts(
   page: number = 1,
   limit: number = 10,
@@ -75,7 +74,6 @@ export async function getAllProducts(
   }
 }
 
-// Get single product
 export async function getProductById(id: string): Promise<GetProductResponse> {
   try {
     const response = await axiosInstance.get(API.PRODUCTS.GET_BY_ID(id));
@@ -85,7 +83,6 @@ export async function getProductById(id: string): Promise<GetProductResponse> {
   }
 }
 
-// Create product with image upload
 export async function createProduct(data: CreateProductPayload, imageFile?: File): Promise<GetProductResponse> {
   try {
     const formData = new FormData();
@@ -99,10 +96,8 @@ export async function createProduct(data: CreateProductPayload, imageFile?: File
     formData.append('isActive', String(data.isActive ?? true));
     
     if (imageFile) {
-      // Upload actual image file
       formData.append('image', imageFile);
     } else if (data.image) {
-      // Use image URL/path if provided
       formData.append('image', data.image);
     }
 
@@ -118,7 +113,6 @@ export async function createProduct(data: CreateProductPayload, imageFile?: File
   }
 }
 
-// Update product with image upload
 export async function updateProduct(id: string, data: UpdateProductPayload, imageFile?: File): Promise<GetProductResponse> {
   try {
     const formData = new FormData();
@@ -149,7 +143,6 @@ export async function updateProduct(id: string, data: UpdateProductPayload, imag
   }
 }
 
-// Delete product
 export async function deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
   try {
     const response = await axiosInstance.delete(API.PRODUCTS.DELETE(id));
@@ -159,7 +152,6 @@ export async function deleteProduct(id: string): Promise<{ success: boolean; mes
   }
 }
 
-// Update stock
 export async function updateProductStock(id: string, quantity: number): Promise<GetProductResponse> {
   try {
     const response = await axiosInstance.patch(API.PRODUCTS.UPDATE_STOCK(id), { quantity });

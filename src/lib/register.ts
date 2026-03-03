@@ -17,18 +17,12 @@ export interface RegisterResponse {
 }
 
 export async function registerUser(data: RegisterPayload): Promise<RegisterResponse> {
-  console.log('Registering user with data:', data);
-  
   try {
-    // Send role as "user" for normal registration
     const payload: RegisterPayload = { ...data, role: data.role ?? "user" };
-    
+
     const response = await axiosInstance.post(API.AUTH.REGISTER, payload);
-    
-    console.log('Registration response:', response.data);
-    
+
     if (response.data.success && response.data.user) {
-      // Store complete user data in cookie
       const authData = {
         user: {
           id: response.data.user.id,

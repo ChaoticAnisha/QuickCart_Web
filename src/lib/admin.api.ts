@@ -1,11 +1,10 @@
 import { API_BASE_URL } from './constants';
 import Cookies from 'js-cookie';
 
-// Helper to get auth headers from cookie
-const getAuthHeaders = () => {
+const getAuthHeaders = (): Record<string, string> => {
   const authCookie = Cookies.get('quickcart_auth');
   if (!authCookie) return {};
-  
+
   try {
     const { user } = JSON.parse(authCookie);
     return {
@@ -18,7 +17,6 @@ const getAuthHeaders = () => {
   }
 };
 
-// Get all users with pagination
 export const getAllUsers = async (page = 1, limit = 10, search = '') => {
   try {
     const response = await fetch(
@@ -35,7 +33,6 @@ export const getAllUsers = async (page = 1, limit = 10, search = '') => {
   }
 };
 
-// Get single user
 export const getUserById = async (id: string) => {
   try {
     const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
@@ -49,14 +46,13 @@ export const getUserById = async (id: string) => {
   }
 };
 
-// Create user
 export const createUser = async (formData: FormData) => {
   try {
     const authHeaders = getAuthHeaders();
     const response = await fetch(`${API_BASE_URL}/admin/users`, {
       method: 'POST',
       headers: authHeaders,
-      body: formData, // FormData automatically sets content-type
+      body: formData,
       credentials: 'include',
     });
     return await response.json();
@@ -66,7 +62,6 @@ export const createUser = async (formData: FormData) => {
   }
 };
 
-// Update user
 export const updateUser = async (id: string, formData: FormData) => {
   try {
     const authHeaders = getAuthHeaders();
@@ -83,7 +78,6 @@ export const updateUser = async (id: string, formData: FormData) => {
   }
 };
 
-// Delete user
 export const deleteUser = async (id: string) => {
   try {
     const authHeaders = getAuthHeaders();

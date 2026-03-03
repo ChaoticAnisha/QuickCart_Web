@@ -33,13 +33,11 @@ export default function CreateUserPage() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({ ...prev, avatar: 'File size must be less than 5MB' }));
         return;
       }
 
-      // Check file type
       if (!file.type.startsWith('image/')) {
         setErrors(prev => ({ ...prev, avatar: 'Please select an image file' }));
         return;
@@ -47,7 +45,6 @@ export default function CreateUserPage() {
 
       setAvatarFile(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string);
@@ -94,7 +91,6 @@ export default function CreateUserPage() {
     setIsSubmitting(true);
 
     try {
-      // Create FormData for file upload
       const submitData = new FormData();
       submitData.append('name', formData.name);
       submitData.append('email', formData.email);

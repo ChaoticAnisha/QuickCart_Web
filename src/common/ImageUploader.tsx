@@ -25,13 +25,11 @@ export default function ImageUploader({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
     }
 
-    // Validate file size
     if (file.size > maxSize * 1024 * 1024) {
       setError(`File size must be less than ${maxSize}MB`);
       return;
@@ -39,7 +37,6 @@ export default function ImageUploader({
 
     setError('');
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
